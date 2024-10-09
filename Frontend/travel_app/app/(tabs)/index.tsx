@@ -2,6 +2,8 @@ import { Image, StyleSheet, Platform, View } from 'react-native';
 import {useState} from 'react'
 
 import WelcomeScreen from '../../src/components/WelcomeScreen.js'
+import LoginScreen from '../../src/components/LoginScreen.js'
+import RegisterScreen from '../../src/components/RegisterScreen.js'
 
 
 ///   link font

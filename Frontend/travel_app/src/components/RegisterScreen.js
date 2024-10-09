@@ -2,7 +2,7 @@ import { Text, View, ScrollView, ImageBackground, StyleSheet, Dimensions, Toucha
 import { LinearGradient } from 'expo-linear-gradient';  //import chuyển màu linear
 const { width } = Dimensions.get('window');
 
-export default LoginScreen = () => {
+export default RegisterScreen = () => {
     return (
         <View style={styles.container}>
             <ImageBackground
@@ -16,8 +16,8 @@ export default LoginScreen = () => {
             />
 
             <View style={styles.container}>
-                <Text style={styles.title}>Login</Text>
-                <Text style={styles.description}>Explore next destination</Text>
+                <Text style={styles.title}>Register</Text>
+                <Text style={styles.description}>Sign up to explore</Text>
                 <View style={{marginTop: 23}}>
                     <TextInput
                         style={[styles.input]}
@@ -27,13 +27,12 @@ export default LoginScreen = () => {
                         style={styles.input}
                         placeholder='Password'
                     />
+                    <TextInput
+                        style={styles.input}
+                        placeholder='Retype Password'
+                    />
                 </View>
                 <View style={{marginTop: 40}}>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={styles.button_text}>
-                            Login
-                        </Text>
-                    </TouchableOpacity>
                     <TouchableOpacity style={styles.button}>
                         <Text style={styles.button_text}>
                             Register
@@ -66,6 +65,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontStyle: 'OpenSans-Semibold',
+        minWidth: 130,
         fontSize: 32,
         alignSelf: 'center',
         marginTop: 250,

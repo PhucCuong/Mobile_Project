@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
     },
     modal: {
-        width: width - 100,
+        width: width - 70,
         backgroundColor: 'white',
         alignSelf: 'center',
         position: 'absolute',
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
         height: 343,
         borderRadius: 32,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     Button: {
         width: 279,
