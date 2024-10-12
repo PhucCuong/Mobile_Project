@@ -1,14 +1,20 @@
 import { Image, StyleSheet, Platform, View } from 'react-native';
-import {useState} from 'react'
+import { useState } from 'react'
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import WelcomeScreen from '../../src/components/WelcomeScreen.js'
 import LoginScreen from '../../src/components/LoginScreen.js'
 import RegisterScreen from '../../src/components/RegisterScreen.js'
+import LoginFail from '../../src/components/LoginFail.js'
 
 
 ///   link font
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
+
+const Stack = createNativeStackNavigator();
 
 const loadFonts = async () => {
   await Font.loadAsync({
@@ -33,7 +39,28 @@ export default function HomeScreen() {
   }
   ///////////////
   return (
-      <WelcomeScreen/>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="WelcomeScreen"
+        component={WelcomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="LoginScreen"
+        component={LoginScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="RegisterScreen"
+        component={RegisterScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="LoginFail"
+        component={LoginFail}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
   );
 }
 

@@ -2,8 +2,8 @@ import { Text, View, ScrollView, ImageBackground, StyleSheet, Dimensions, Toucha
 import { LinearGradient } from 'expo-linear-gradient';  //import chuyển màu linear
 const { width } = Dimensions.get('window');
 
-export default RegisterScreen = ({ navigation }) => {
-    const enterLogin = () => {
+export default LoginFail = ({ navigation }) => {
+    const backLogin = () => {
         navigation.navigate('LoginScreen')
     }
     return (
@@ -19,8 +19,8 @@ export default RegisterScreen = ({ navigation }) => {
             />
 
             <View style={styles.container}>
-                <Text style={styles.title}>Register</Text>
-                <Text style={styles.description}>Sign up to explore</Text>
+                <Text style={styles.title}>Login</Text>
+                <Text style={styles.description}>Explore next destination</Text>
                 <View style={{ marginTop: 23 }}>
                     <TextInput
                         style={[styles.input]}
@@ -30,19 +30,30 @@ export default RegisterScreen = ({ navigation }) => {
                         style={styles.input}
                         placeholder='Password'
                     />
-                    <TextInput
-                        style={styles.input}
-                        placeholder='Retype Password'
-                    />
                 </View>
                 <View style={{ marginTop: 40 }}>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.button_text}>
+                            Login
+                        </Text>
+                    </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={enterLogin}
                     >
                         <Text style={styles.button_text}>
                             Register
                         </Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+            <View style={styles.overlay2}>
+                <View style={styles.fail_modal}>
+                    <Text style={styles.fail_modal_title}>Login Failed</Text>
+                    <TouchableOpacity
+                        style={styles.button_modal_fail}
+                        onPress={backLogin}
+                    >
+                        <Text style={styles.fail_modal_text}>Back</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -61,6 +72,14 @@ const styles = StyleSheet.create({
         ...StyleSheet.absoluteFillObject,
         backgroundColor: 'rgba(0, 0, 0, 0.4)',
     },
+    overlay2: {
+        backgroundColor: 'linear-gradient(179.87deg, rgba(0, 0, 0, 0.6) 0.11%, rgba(153, 153, 153, 0.6) 99.89%)',
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+    },
     container: {
         position: 'absolute',
         top: 0,
@@ -71,13 +90,13 @@ const styles = StyleSheet.create({
     },
     title: {
         fontStyle: 'OpenSans-Semibold',
-        minWidth: 130,
         fontSize: 32,
         alignSelf: 'center',
         marginTop: 250,
         width: 86,
         height: 39,
-        color: '#FFFFFF'
+        color: '#FFFFFF',
+        lineHeight: 39,
     },
     description: {
         alignSelf: 'center',
@@ -108,5 +127,40 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: 'OpenSans-Semibold',
         color: 'white'
+    },
+    fail_modal: {
+        position: 'absolute',
+        width: 350,
+        height: 200,
+        backgroundColor: '#111111',
+        borderRadius: 12,
+        top: 316,
+        left: 13
+    },
+    fail_modal_title: {
+        fontSize: 20,
+        lineHeight: 24,
+        color: '#FFFFFF',
+        width: 117,
+        height: 24,
+        alignSelf: 'center',
+        marginTop: 40
+    },
+    button_modal_fail: {
+        width: 222,
+        height: 48,
+        backgroundColor: '#007AFF',
+        borderRadius: 12,
+        alignSelf: 'center',
+        marginTop: 46,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    fail_modal_text: {
+        fontSize: 16,
+        lineHeight: 19,
+        color: '#FFFFFF',
+        fontWeight: 600,
+
     }
 })

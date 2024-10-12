@@ -2,7 +2,13 @@ import { Text, View, ScrollView, ImageBackground, StyleSheet, Dimensions, Toucha
 import { LinearGradient } from 'expo-linear-gradient';  //import chuyển màu linear
 const { width } = Dimensions.get('window');
 
-export default LoginScreen = () => {
+export default LoginScreen = ({ navigation }) => {
+    const enterRegister = () => {
+        navigation.navigate('RegisterScreen')
+    }
+    const enterLoginFail = () => {
+        navigation.navigate('LoginFail')
+    }
     return (
         <View style={styles.container}>
             <ImageBackground
@@ -18,7 +24,7 @@ export default LoginScreen = () => {
             <View style={styles.container}>
                 <Text style={styles.title}>Login</Text>
                 <Text style={styles.description}>Explore next destination</Text>
-                <View style={{marginTop: 23}}>
+                <View style={{ marginTop: 23 }}>
                     <TextInput
                         style={[styles.input]}
                         placeholder='Username'
@@ -28,13 +34,19 @@ export default LoginScreen = () => {
                         placeholder='Password'
                     />
                 </View>
-                <View style={{marginTop: 40}}>
-                    <TouchableOpacity style={styles.button}>
+                <View style={{ marginTop: 40 }}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={enterLoginFail}
+                    >
                         <Text style={styles.button_text}>
                             Login
                         </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={enterRegister}
+                    >
                         <Text style={styles.button_text}>
                             Register
                         </Text>
@@ -71,13 +83,14 @@ const styles = StyleSheet.create({
         marginTop: 250,
         width: 86,
         height: 39,
-        color: '#FFFFFF'
+        color: '#FFFFFF',
+        lineHeight: 39,
     },
     description: {
         alignSelf: 'center',
         marginTop: 23,
         fontSize: 20,
-        color: '#EEEEEE'
+        color: 'rgba(238, 238, 238, 0.933333)'
     },
     input: {
         width: width - 64,
@@ -92,7 +105,7 @@ const styles = StyleSheet.create({
         marginTop: 23,
         width: 222,
         height: 48,
-        backgroundColor: 'blue',
+        backgroundColor: '#007AFF',
         alignSelf: 'center',
         justifyContent: 'center',
         alignItems: 'center',

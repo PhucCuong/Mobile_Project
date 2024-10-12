@@ -2,7 +2,10 @@ import { Text, Image, View, ScrollView, ImageBackground, StyleSheet, Dimensions,
 
 const { width } = Dimensions.get('window');
 
-export default WelcomeScreen = () => {
+export default WelcomeScreen = ({ navigation }) => {
+    const enterLogin = () => {
+        navigation.navigate('LoginScreen')
+    }
     return (
         <View style={{ flex: 1 }}>
             <ImageBackground
@@ -14,7 +17,10 @@ export default WelcomeScreen = () => {
             <View style={styles.modal}>
                 <Text style={styles.title_text}>Discover best places any where in the world</Text>
                 <Text style={styles.discription_text}>Also the leap into electronic typesetting, remaining assentially unchanged</Text>
-                <TouchableOpacity style={styles.Button}>
+                <TouchableOpacity
+                    style={styles.Button}
+                    onPress={enterLogin}
+                >
                     <Text style={styles.button_text}>Get Started</Text>
                 </TouchableOpacity>
             </View>
@@ -36,7 +42,6 @@ const styles = StyleSheet.create({
         fontSize: 24,
     },
     modal: {
-        width: width - 70,
         backgroundColor: 'white',
         alignSelf: 'center',
         position: 'absolute',
@@ -45,6 +50,8 @@ const styles = StyleSheet.create({
         borderRadius: 32,
         justifyContent: 'center',
         alignItems: 'center',
+        height: 343,
+        width: 343
     },
     Button: {
         width: 279,
@@ -52,13 +59,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#111111',
         borderRadius: 12,
         justifyContent: 'center',
-        alignItems:'center',
+        alignItems: 'center',
         marginTop: 42
     },
     button_text: {
-        color: 'white',
+        width: 79,
+        height: 20,
+        fontFamily: 'Inter',
         fontSize: 14,
-        fontFamily: 'OpenSans-Semibold'
+        lineHeight: 20,
+        color: 'white'
     },
     title_text: {
         fontFamily: 'OpenSans-Semibold',
@@ -66,13 +76,14 @@ const styles = StyleSheet.create({
         lineHeight: 40,
         width: 284,
         height: 120,
+        color: '#111111',
     },
     discription_text: {
+        fontFamily: 'Inter',
+        fontStyle: 'normal',
         fontSize: 14,
         lineHeight: 20,
-        width: 277,
-        height: 40,
-        marginTop: 17,
+        width: 284,
         color: '#B0B0B0'
     }
 });
