@@ -49,6 +49,7 @@ export default LoginFail = ({ navigation }) => {
             <View style={styles.overlay2}>
                 <View style={styles.fail_modal}>
                     <Text style={styles.fail_modal_title}>Login Failed</Text>
+                    <Text style={styles.fail_modal_description}>Username or Password is incorrect</Text>
                     <TouchableOpacity
                         style={styles.button_modal_fail}
                         onPress={backLogin}
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
     fail_modal: {
         position: 'absolute',
         width: 350,
-        height: 200,
+        height: 250,
         backgroundColor: '#111111',
         borderRadius: 12,
         top: 316,
@@ -145,6 +146,12 @@ const styles = StyleSheet.create({
         height: 24,
         alignSelf: 'center',
         marginTop: 40
+    },
+    fail_modal_description: {
+        marginTop: 30,
+        fontSize: 16,
+        textAlign: 'center',
+        color: '#B0B0B0'
     },
     button_modal_fail: {
         width: 222,

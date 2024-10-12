@@ -8,6 +8,7 @@ import WelcomeScreen from '../../src/components/WelcomeScreen.js'
 import LoginScreen from '../../src/components/LoginScreen.js'
 import RegisterScreen from '../../src/components/RegisterScreen.js'
 import LoginFail from '../../src/components/LoginFail.js'
+import DashboardScreen from '../../src/components/DashboardScreen.js'
 
 
 ///   link font
@@ -39,7 +40,7 @@ export default function HomeScreen() {
   }
   ///////////////
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName='DashboardScreen'>
       <Stack.Screen
         name="WelcomeScreen"
         component={WelcomeScreen}
@@ -58,6 +59,11 @@ export default function HomeScreen() {
       <Stack.Screen
         name="LoginFail"
         component={LoginFail}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="DashboardScreen"
+        component={DashboardScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

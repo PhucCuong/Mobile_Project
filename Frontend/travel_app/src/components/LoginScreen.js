@@ -28,10 +28,12 @@ export default LoginScreen = ({ navigation }) => {
                     <TextInput
                         style={[styles.input]}
                         placeholder='Username'
+                        placeholderTextColor = "#B0B0B0"
                     />
                     <TextInput
                         style={styles.input}
                         placeholder='Password'
+                        placeholderTextColor = "#B0B0B0"
                     />
                 </View>
                 <View style={{ marginTop: 40 }}>

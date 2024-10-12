@@ -65,7 +65,6 @@ const styles = StyleSheet.create({
     button_text: {
         width: 79,
         height: 20,
-        fontFamily: 'Inter',
         fontSize: 14,
         lineHeight: 20,
         color: 'white'
@@ -79,7 +78,6 @@ const styles = StyleSheet.create({
         color: '#111111',
     },
     discription_text: {
-        fontFamily: 'Inter',
         fontStyle: 'normal',
         fontSize: 14,
         lineHeight: 20,
