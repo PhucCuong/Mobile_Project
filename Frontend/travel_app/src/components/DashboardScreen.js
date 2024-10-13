@@ -6,7 +6,14 @@ const screenWidth = Dimensions.get('window').width;
 
 export default DashboardScreen = () => {
 
-    const location_list = [
+    // get user lên server để lấy thông tin user render ra giao diện
+    const user = {
+        avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPVt9ionGvLO1eu6gr5FSxk79tbH92EYE8jQ&s',
+        user_name: 'Cường'
+    }
+
+    // Gửi get lên sever để lấy thông tin các địa điểm để render ra giao diện
+    let location_list = [
         {
             id: 1,
             img: 'https://images.pexels.com/photos/2265876/pexels-photo-2265876.jpeg?auto=compress&cs=tinysrgb&w=600',
@@ -44,6 +51,10 @@ export default DashboardScreen = () => {
                     avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYROR0fm8scNmYMwKBN2HpD2Bddj6JeJtCkw&s',
                     user_name: 'Kudo',
                 },
+                {
+                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPVt9ionGvLO1eu6gr5FSxk79tbH92EYE8jQ&s',
+                    user_name: 'Cường'
+                }
             ],
             distance: '23,7 km',
         },
@@ -84,16 +95,77 @@ export default DashboardScreen = () => {
                     avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYROR0fm8scNmYMwKBN2HpD2Bddj6JeJtCkw&s',
                     user_name: 'Kudo',
                 },
+                {
+                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPVt9ionGvLO1eu6gr5FSxk79tbH92EYE8jQ&s',
+                    user_name: 'Cường'
+                }
+
             ],
             distance: '21,2 km',
         },
     ]
 
+    const [acctivedPage, setAcctivedPage] = useState('home')
+    const page_acction = (page_name) => {
+        setAcctivedPage(page_name)
+    }
+
+    const toggle_like = (id) => {
+        // Tìm vị trí của item trong location_list dựa trên id
+        const locationIndex = location_list.findIndex(location => location.id === id);
+
+        if (locationIndex !== -1) {
+            // Kiểm tra xem user đã có trong mảng like_user hay chưa
+            const userIndex = location_list[locationIndex].like_user.findIndex(likeUser =>
+                likeUser.user_name === user.user_name
+            );
+
+            if (userIndex === -1) {
+                // Nếu user không tồn tại trong mảng like_user, thêm user vào
+                location_list[locationIndex].like_user.push({
+                    avatar: user.avatar,
+                    user_name: user.user_name
+                });
+                console.log('User added to like list');
+            } else {
+                // Nếu user đã tồn tại trong mảng like_user, xóa user khỏi mảng
+                location_list[locationIndex].like_user.splice(userIndex, 1);
+                console.log('User removed from like list');
+            }
+
+            /////////////////////////////////////////////////////////////////////////
+            //  GỬI PUT LÊN SERVER ĐỂ THÊM HOẶC XOÁ USER LIKE RỒI GET VỀ LẠI ĐỂ TONGGLE TYM
+
+
+        } else {
+            console.log('Location not found');
+        }
+
+        // Kiểm tra lại mảng location_list sau khi cập nhật
+        console.log(location_list[locationIndex]);
+    }
+
+    // hàm kiểm tra xem user đang sử dụng app có trong danh sách những user đã like của từng location hay không
+    const checkUserInLikeList = (id, user) => {
+        // Kiểm tra xem index có hợp lệ không
+        if (index < 0 || index >= location_list.length) {
+            return false; // Nếu index không hợp lệ, trả về false
+        }
+
+        // tìm index
+        let index = location_list.findIndex(item => item.id === id)
+
+        // Sử dụng some() để kiểm tra xem user có tồn tại trong like_user không
+        return location_list[index].like_user.some(likeUser =>
+            likeUser.user_name === user.user_name
+        );
+    };
+
     return (
         <View style={styles.container}>
             {/* info */}
             <View style={styles.info_conteiner}>
-                <Text style={styles.name}>Hi, Cường</Text>
+                <Text style={styles.name}>Hi, {user.user_name}</Text>
                 <View>
                     <View style={styles.location_row}>
                         <FontAwesome name="map-marker" size={17} color="#B0B0B0" />
@@ -106,7 +178,7 @@ export default DashboardScreen = () => {
                         <View style={styles.online}></View>
                     </TouchableOpacity>
                     <TouchableOpacity>
-                        <Image source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPVt9ionGvLO1eu6gr5FSxk79tbH92EYE8jQ&s' }} style={styles.avatar} />
+                        <Image source={{ uri: user.avatar }} style={styles.avatar} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -180,7 +252,10 @@ export default DashboardScreen = () => {
                 >
                     {
                         location_list.map((item, key) => (
-                            <TouchableOpacity style={styles.location_item}>
+                            <TouchableOpacity
+                                style={styles.location_item}
+                                _id={key}
+                            >
                                 <Image
                                     style={styles.location_image}
                                     source={{ uri: item.img }}
@@ -188,17 +263,23 @@ export default DashboardScreen = () => {
                                 <View style={styles.hot_container}>
                                     <Text style={styles.hot_text}>HOT</Text>
                                 </View>
-                                <TouchableOpacity style={styles.tym_container}>
-                                    <FontAwesome name="heart" size={18} color="blue" />
+                                <TouchableOpacity
+                                    style={styles.tym_container}
+                                    onPress={() => toggle_like(item.id)}
+                                >
+                                    <FontAwesome name="heart" size={18} color={
+                                        checkUserInLikeList(item.id, user) === true ? 'blue' : 'white'
+                                    } />
                                 </TouchableOpacity>
                                 <Text style={styles.location_name}>{item.location_name}</Text>
 
                                 <View style={styles.users_row}>
                                     {
-                                        item.like_user.map((user, key) => (
+                                        item.like_user.map((user, key2) => (
                                             <Image
                                                 style={styles.small_avatar}
-                                                source={{uri: user.avatar}}
+                                                source={{ uri: user.avatar }}
+                                                id_img={key2}
                                             />
                                         ))
                                     }
@@ -214,6 +295,35 @@ export default DashboardScreen = () => {
                         ))
                     }
                 </ScrollView>
+            </View>
+
+            {/* menu bottom */}
+            <View style={styles.menu_bottom_container}>
+                <TouchableOpacity
+                    onPress={() => page_acction('home')}
+                >
+                    <FontAwesome name="home" size={24} color={acctivedPage === 'home' ? 'white' : '#555555'} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => page_acction('calendar')}
+                >
+                    <FontAwesome name="calendar" size={24} color={acctivedPage === 'calendar' ? 'white' : '#555555'} />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <View style={styles.search}>
+                        <FontAwesome name="search" size={24} color="#555555" />
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => page_acction('like')}
+                >
+                    <FontAwesome name="heart" size={24} color={acctivedPage === 'like' ? 'white' : '#555555'} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => page_acction('setting')}
+                >
+                    <FontAwesome name="gear" size={24} color={acctivedPage === 'setting' ? 'white' : '#555555'} />
+                </TouchableOpacity>
             </View>
         </View>
     )
@@ -414,7 +524,9 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 16,
         bottom: 14,
-        paddingLeft: 10
+        paddingLeft: 10,
+        maxWidth: 100,
+        overflow: 'hidden'
     },
     small_avatar: {
         width: 20,
@@ -435,8 +547,28 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    plus_text :{
+    plus_text: {
         color: 'white',
         fontSize: 6
+    },
+    menu_bottom_container: {
+        width: screenWidth - 2,
+        height: 96,
+        borderRadius: 32,
+        position: 'absolute',
+        bottom: 1,
+        backgroundColor: '#111111',
+        alignSelf: 'center',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around'
+    },
+    search: {
+        width: 56,
+        height: 56,
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 28
     }
 })
