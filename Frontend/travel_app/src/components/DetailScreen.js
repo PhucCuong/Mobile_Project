@@ -44,6 +44,14 @@ export default DetailScreen = ({ navigation, route }) => {
                 source={{ uri: tourist.img }}
                 style={styles.image}
             />
+            <TouchableOpacity
+                style={styles.back_icon}
+                onPress={() => {
+                    navigation.goBack()
+                }}
+            >
+                <FontAwesome name="chevron-left" size={25} color="white" />
+            </TouchableOpacity>
             <View style={styles.content_container}>
                 <View style={styles.price_container}>
                     <Text style={styles.price_text}>{tourist.price}</Text>
@@ -237,6 +245,11 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: 'OpenSans-Semibold',
         color: 'white'
+    },
+    back_icon: {
+        position: 'absolute',
+        left: 26,
+        top: 60,
     }
 })
 

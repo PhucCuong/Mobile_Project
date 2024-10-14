@@ -10,6 +10,7 @@ import RegisterScreen from '../../src/components/RegisterScreen.js'
 import LoginFail from '../../src/components/LoginFail.js'
 import DashboardScreen from '../../src/components/DashboardScreen.js'
 import DetailScreen from '../../src/components/DetailScreen.js'
+import CategoriesList from '../../src/components/CategoriesList.js'
 
 
 ///   link font
@@ -70,6 +71,11 @@ export default function HomeScreen() {
       <Stack.Screen
         name="DetailScreen"
         component={DetailScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CategoriesList"
+        component={CategoriesList}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

@@ -181,6 +181,10 @@ export default DashboardScreen = ({navigation}) => {
         navigation.navigate('DetailScreen', {id: id})
     }
 
+    const gotoCategoriesListScreen = (endpoint) => {
+        navigation.navigate('CategoriesList', {category: endpoint})
+    }
+
     return (
         <View style={styles.container}>
             {/* info */}
@@ -225,28 +229,40 @@ export default DashboardScreen = ({navigation}) => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.categories_row}>
-                    <TouchableOpacity style={styles.categories_button}>
+                    <TouchableOpacity 
+                    style={styles.categories_button}
+                    onPress={() => gotoCategoriesListScreen('restaurants')}
+                    >
                         <View style={styles.icon_container}>
                             <FontAwesome name="cutlery" size={24} color="white" />
                         </View>
                         <Text style={styles.categories_text}>Restaurants</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.categories_button}>
+                    <TouchableOpacity 
+                    style={styles.categories_button}
+                    onPress={() => gotoCategoriesListScreen('hotels')}
+                    >
                         <View style={styles.icon_container}>
                             <FontAwesome name="building" size={24} color="white" />
                         </View>
                         <Text style={styles.categories_text}>Hotels</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.categories_button}>
+                    <TouchableOpacity 
+                    style={styles.categories_button}
+                    onPress={() => gotoCategoriesListScreen('beaches')}
+                    >
                         <View style={styles.icon_container}>
                             <FontAwesome name="bath" size={24} color="white" />
                         </View>
                         <Text style={styles.categories_text}>Beaches</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.categories_button}>
+                    <TouchableOpacity 
+                    style={styles.categories_button}
+                    onPress={() => gotoCategoriesListScreen('coffees')}
+                    >
                         <View style={styles.icon_container}>
                             <FontAwesome name="coffee" size={24} color="white" />
                         </View>
@@ -271,10 +287,10 @@ export default DashboardScreen = ({navigation}) => {
                     showsHorizontalScrollIndicator={false}
                 >
                     {
-                        tourist_list.map((item, key) => (
+                        tourist_list.map((item, index) => (
                             <TouchableOpacity
                                 style={styles.location_item}
-                                _id={key}
+                                key={index}
                                 onPress={() => goToDetailScreen(item.id)}
                             >
                                 <Image
@@ -296,11 +312,11 @@ export default DashboardScreen = ({navigation}) => {
 
                                 <View style={styles.users_row}>
                                     {
-                                        item.like_user.map((user, key2) => (
+                                        item.like_user.map((user, i) => (
                                             <Image
                                                 style={styles.small_avatar}
                                                 source={{ uri: user.avatar }}
-                                                id_img={key2}
+                                                key={i}
                                             />
                                         ))
                                     }
