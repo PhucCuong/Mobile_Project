@@ -122,6 +122,14 @@ export default DashboardScreen = ({navigation}) => {
         },
     ]
 
+    // Lọc Categories theo ô tìm kiếm
+
+    const [searchValue, setSearchValue] = useState('')
+    const renderTourist = tourist_list.filter((item) => 
+        item.tourist_name.toLowerCase().includes(searchValue.toLowerCase())
+    ) 
+    ///////////////////////////
+
     const [acctivedPage, setAcctivedPage] = useState('home')
     const page_acction = (page_name) => {
         setAcctivedPage(page_name)
@@ -218,6 +226,7 @@ export default DashboardScreen = ({navigation}) => {
                     style={styles.input}
                     placeholder='Search for place...'
                     placeholderTextColor="#B0B0B0"
+                    onChangeText={(value) => setSearchValue(value)}
                 />
                 <FontAwesome
                     name="search" size={24} color="#B0B0B0"
@@ -292,7 +301,7 @@ export default DashboardScreen = ({navigation}) => {
                     showsHorizontalScrollIndicator={false}
                 >
                     {
-                        tourist_list.map((item, index) => (
+                        renderTourist.map((item, index) => (
                             <TouchableOpacity
                                 style={styles.location_item}
                                 key={index}
