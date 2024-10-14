@@ -9,7 +9,8 @@ export default DashboardScreen = ({navigation}) => {
     // get user lên server để lấy thông tin user render ra giao diện
     const user = {
         avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPVt9ionGvLO1eu6gr5FSxk79tbH92EYE8jQ&s',
-        user_name: 'Cường'
+        user_name: 'Cường',
+        id: 1,
     }
 
     // Gửi get lên sever để lấy thông tin các địa điểm để render ra giao diện
@@ -201,7 +202,11 @@ export default DashboardScreen = ({navigation}) => {
                         <FontAwesome name="bell" size={24} color="black" />
                         <View style={styles.online}></View>
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            navigation.navigate('UserInfoScreen', {_id: user.id})
+                        }}
+                    >
                         <Image source={{ uri: user.avatar }} style={styles.avatar} />
                     </TouchableOpacity>
                 </View>

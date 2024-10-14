@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions } from 'react-native';
+import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, SafeAreaView } from 'react-native';
 import { useState } from 'react'
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -72,8 +72,8 @@ export default DetailScreen = ({ navigation, route }) => {
 
                     <View style={styles.benerfic_row}>
                         {
-                            tourist.benerfics.map((item, key) => (
-                                <View _id={key} style={styles.benerfic_item}>
+                            tourist.benerfics.map((item, index) => (
+                                <View key={index} style={styles.benerfic_item}>
                                     <Text style={styles.benerfic_text}>
                                         {item}
                                     </Text>
@@ -90,8 +90,8 @@ export default DetailScreen = ({ navigation, route }) => {
 
                     <View style={styles.avatar_row}>
                         {
-                            tourist.like_user.map((item, key) => (
-                                <View>
+                            tourist.like_user.map((item, index) => (
+                                <View key={index}>
                                     <Image
                                         source={{ uri: item.avatar }}
                                         style={styles.avatar}
