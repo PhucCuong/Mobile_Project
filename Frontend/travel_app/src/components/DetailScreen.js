@@ -34,7 +34,7 @@ export default DetailScreen = ({ navigation, route }) => {
             }
         ],
         distance: '23,7 km',
-        discription: 'Bãi biển Rabbit sở hữu những vách đá trắng, nước trong xanh tinh khiết, nhiệt độ ấm áp và cảnh quan đẹp mê hồn. Tới đây, du khách sẽ có dịp chiêm ngưỡng những chú rùa đẻ trứng và cá heo thỉnh thoảng nhô lên mặt nước.',
+        description: 'Bãi biển Rabbit sở hữu những vách đá trắng, nước trong xanh tinh khiết, nhiệt độ ấm áp và cảnh quan đẹp mê hồn. Tới đây, du khách sẽ có dịp chiêm ngưỡng những chú rùa đẻ trứng và cá heo thỉnh thoảng nhô lên mặt nước.',
         price: '320$/Day',
         benerfics: ['sightseeing', 'buffeet', 'hotel'],
     }
@@ -85,7 +85,7 @@ export default DetailScreen = ({ navigation, route }) => {
                     <Text style={styles.descript_title}>Description</Text>
 
 
-                    <Text style={styles.description_text}>{tourist.discription}</Text>
+                    <Text style={styles.description_text}>{tourist.description}</Text>
                     <View style={styles.over}></View>
 
                     <View style={styles.avatar_row}>

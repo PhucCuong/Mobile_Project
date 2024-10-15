@@ -22,16 +22,17 @@ export default DashboardScreen = ({ navigation, route }) => {
 
     const id = route.params.id
 
-    useEffect(() => {
-        const fetchCustomer = async () => {
-            try {
-                const response = await axios.get(`${ip}/customer/${id}`);
-                setUser(response.data); // Đặt thành response.data
-            } catch (error) {
-                console.log(error);
-            }
-        };
+    // hàm call api lấy thông tin người dùng
+    const fetchCustomer = async () => {
+        try {
+            const response = await axios.get(`${ip}/customer/${id}`);
+            setUser(response.data); // Đặt thành response.data
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
+    useEffect(() => {
         fetchCustomer();
     }, [isFocused]);
 
@@ -57,7 +58,7 @@ export default DashboardScreen = ({ navigation, route }) => {
                 },
             ],
             distance: '2,5 km',
-            discription: 'Bãi biển Nungwi ở phía bắc quần đảo Zanzibar giờ đã trở thành điểm du lịch nghỉ mát nổi tiếng của Tanzania. Màu xanh ngọc bích của biển cả xen lẫn ráng vàng của hoàng hôn hẳn là khung cảnh lãng mạn nhất mà bạn muốn ngắm nhìn mỗi dịp đến đây.',
+            description: 'Bãi biển Nungwi ở phía bắc quần đảo Zanzibar giờ đã trở thành điểm du lịch nghỉ mát nổi tiếng của Tanzania. Màu xanh ngọc bích của biển cả xen lẫn ráng vàng của hoàng hôn hẳn là khung cảnh lãng mạn nhất mà bạn muốn ngắm nhìn mỗi dịp đến đây.',
             price: '560$/Day',
             benerfics: ['sightseeing', 'buffeet', 'hotel'],
         },
@@ -85,7 +86,7 @@ export default DashboardScreen = ({ navigation, route }) => {
                 }
             ],
             distance: '23,7 km',
-            discription: 'Bãi biển Rabbit sở hữu những vách đá trắng, nước trong xanh tinh khiết, nhiệt độ ấm áp và cảnh quan đẹp mê hồn. Tới đây, du khách sẽ có dịp chiêm ngưỡng những chú rùa đẻ trứng và cá heo thỉnh thoảng nhô lên mặt nước.',
+            description: 'Bãi biển Rabbit sở hữu những vách đá trắng, nước trong xanh tinh khiết, nhiệt độ ấm áp và cảnh quan đẹp mê hồn. Tới đây, du khách sẽ có dịp chiêm ngưỡng những chú rùa đẻ trứng và cá heo thỉnh thoảng nhô lên mặt nước.',
             price: '320$/Day',
             benerfics: ['sightseeing', 'buffeet', 'hotel'],
         },
@@ -109,7 +110,7 @@ export default DashboardScreen = ({ navigation, route }) => {
                 },
             ],
             distance: '10,4 km',
-            discription: 'Đây là một trong những bãi biển đẹp rất được ưa thích cho du khách du lịch Thái Lan lặn biển vì nước rất trong, nhìn đến tận đáy. Tầng tầng lớp lớp san hô mọc dưới đáy biển, cá lội tung tăng, có cả hải quỳ và sên biển màu tím.',
+            description: 'Đây là một trong những bãi biển đẹp rất được ưa thích cho du khách du lịch Thái Lan lặn biển vì nước rất trong, nhìn đến tận đáy. Tầng tầng lớp lớp san hô mọc dưới đáy biển, cá lội tung tăng, có cả hải quỳ và sên biển màu tím.',
             price: '100/Day',
             benerfics: ['sightseeing', 'buffeet', 'hotel'],
         },
@@ -138,7 +139,7 @@ export default DashboardScreen = ({ navigation, route }) => {
 
             ],
             distance: '21,2 km',
-            discription: 'Whitehaven hẻo lánh tại công viên quốc gia đảo Whitsunday có đường bờ biển tuyệt đẹp, không người sinh sống là bãi biển đẹp nhất xứ sở chuột túi. Whitehaven sở hữu làn nước trong xanh như ngọc và bãi cát trắng nhất trên thế giới.',
+            description: 'Whitehaven hẻo lánh tại công viên quốc gia đảo Whitsunday có đường bờ biển tuyệt đẹp, không người sinh sống là bãi biển đẹp nhất xứ sở chuột túi. Whitehaven sở hữu làn nước trong xanh như ngọc và bãi cát trắng nhất trên thế giới.',
             price: '400/Day',
             benerfics: ['sightseeing', 'buffeet', 'hotel'],
         },
