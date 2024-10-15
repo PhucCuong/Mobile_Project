@@ -67,9 +67,6 @@ export default RegisterScreen = ({ navigation }) => {
         }
     }
 
-    const enterLogin = () => {
-        navigation.navigate('LoginScreen')
-    }
     return (
         <View style={styles.container}>
             <ImageBackground

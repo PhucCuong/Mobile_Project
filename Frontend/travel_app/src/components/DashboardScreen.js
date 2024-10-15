@@ -3,11 +3,14 @@ import { useState, useEffect } from 'react'
 import { FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
 import ip from '../../assets/ip/Ip.js'
+import { useIsFocused } from '@react-navigation/native';
 
 
 const screenWidth = Dimensions.get('window').width;
 
 export default DashboardScreen = ({ navigation, route }) => {
+
+    const isFocused = useIsFocused();
 
     const [user, setUser] = useState({
         avatar: '',
@@ -30,7 +33,7 @@ export default DashboardScreen = ({ navigation, route }) => {
         };
 
         fetchCustomer();
-    }, []);
+    }, [isFocused]);
 
     // Gửi get lên sever để lấy thông tin các địa điểm để render ra giao diện
     let tourist_list = [
@@ -231,7 +234,8 @@ export default DashboardScreen = ({ navigation, route }) => {
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => {
-                            navigation.navigate('UserInfoScreen', { _id: user.id })
+                            const endpoint = user._id
+                            navigation.navigate('UserInfoScreen', { _id: endpoint})
                         }}
                     >
                         <Image source={{ uri: user.avatar }} style={styles.avatar} />

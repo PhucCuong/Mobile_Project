@@ -1,22 +1,51 @@
-import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, SafeAreaView } from 'react-native';
+import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, SafeAreaView, Alert } from 'react-native';
 import { useState, useRef, useEffect } from 'react'
 import { FontAwesome } from '@expo/vector-icons';
+import axios from 'axios';
+
+import ip from '../../assets/ip/Ip.js'
+
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
+
+const default_avatar = 'https://as2.ftcdn.net/v2/jpg/05/49/98/39/1000_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg'
 
 export default UserInfoScreen = ({ navigation, route }) => {
 
     const userEndpoint = route.params._id
 
-    // get api theo id user
-    const user = {
-        avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPVt9ionGvLO1eu6gr5FSxk79tbH92EYE8jQ&s',
-        user_name: 'Cường',
-        phone_number: '012345678',
-        location: 'Viet Nam',
-        gender: 'Male'
-    }
+    // khai báo biến lưu value của 3 input
+    const [phoneNumber, setPhoneNumber] = useState('')
+    const [location, setLocation] = useState('')
+    const [gender, setGender] = useState('')
+    const [userName, setUserName] = useState('')
+
+    const [user, setUser] = useState({
+        avatar: '',
+        user_name: '',
+        phone_number: '',
+        location: '',
+        gender: '',
+    })
+
+    const fetchCustomer = async () => {
+        try {
+            const response = await axios.get(`${ip}/customer/${userEndpoint}`);
+            setUser(response.data)
+            setPhoneNumber(response.data.phone_number)
+            setLocation(response.data.location)
+            setGender(response.data.gender)
+            setUserName(response.data.user_name)
+            setLinkAvatar(response.data.avatar)
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCustomer()
+    }, [])
 
     // xử lý logic sủa link avatar
     const [linkAvatar, setLinkAvatar] = useState(user.avatar)
@@ -26,6 +55,7 @@ export default UserInfoScreen = ({ navigation, route }) => {
     useEffect(() => {
         if (isEditable && editAvatarInput.current) {
             editAvatarInput.current.focus();
+            setLinkAvatar('')
         }
     }, [isEditable])
 
@@ -57,8 +87,27 @@ export default UserInfoScreen = ({ navigation, route }) => {
     /////////////////////////////////////////////////
 
     // hàm call api để sửa thông tin người dùng
-    const editUserInfo = () => {
 
+    const editUserInfo = async () => {
+        const info = {
+            avatar: linkAvatar,
+            user_name: userName,
+            phone_number: phoneNumber,
+            location: location,
+            gender: gender,
+        }
+
+        try {
+            const response = await axios.put(`${ip}/customer/${userName}`, info);
+            if(response.status === 400) {
+                Alert.alert('Cập nhật thông tin không thành công!!!')
+            } else {
+                Alert.alert('Cập nhật thông tin thành công')
+                setUser(response.data)
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -84,11 +133,11 @@ export default UserInfoScreen = ({ navigation, route }) => {
                         {user.user_name}
                     </Text>
                     <Image
-                        source={{ uri: user.avatar }}
+                        source={{ uri: user.avatar === '' ? default_avatar :  user.avatar}}
                         style={styles.user_avatar}
                     />
                     <TextInput
-                        onChange={(value) => {
+                        onChangeText={(value) => {
                             setLinkAvatar(value)
                         }}
                         style={styles.avatar_input}
@@ -96,6 +145,7 @@ export default UserInfoScreen = ({ navigation, route }) => {
                         placeholderTextColor='#B0B0B0'
                         editable={isEditable} // Disable TextInput
                         ref={editAvatarInput}
+                        value={linkAvatar}
                     />
                     <TouchableOpacity
                         style={[styles.edit_button, styles.edit_avatar_button]}
@@ -118,9 +168,10 @@ export default UserInfoScreen = ({ navigation, route }) => {
                         <View style={[styles.row_one]}>
                             <Text style={styles.title_content}>Phone number : </Text>
                             <TextInput
-                                value={user.phone_number}
+                                value={phoneNumber}
                                 ref={editPhoneInput}
                                 editable={isPhoneEditable}
+                                onChangeText={(value) => setPhoneNumber(value)}
                             />
                             <TouchableOpacity
                                 style={[styles.edit_button, styles.content_edit_button]}
@@ -134,9 +185,10 @@ export default UserInfoScreen = ({ navigation, route }) => {
                         <View style={styles.row_one}>
                             <Text style={styles.title_content}>Location : </Text>
                             <TextInput
-                                value={user.location}
+                                value={location}
                                 ref={editLocationInput}
                                 editable={isLocationEditable}
+                                onChangeText={(value) => setLocation(value)}
                             />
                             <TouchableOpacity
                                 style={[styles.edit_button, styles.content_edit_button]}
@@ -150,9 +202,10 @@ export default UserInfoScreen = ({ navigation, route }) => {
                         <View style={styles.row_one}>
                             <Text style={styles.title_content}>Gender : </Text>
                             <TextInput
-                                value={user.gender}
+                                value={gender}
                                 ref={editGenderInput}
                                 editable={isGenderEditable}
+                                onChangeText={(value) => setGender(value)}
                             />
                             <TouchableOpacity
                                 style={[styles.edit_button, styles.content_edit_button]}
@@ -288,7 +341,8 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         backgroundColor: '#111111',
         alignSelf: 'center',
-        marginTop: 60
+        marginTop: 60,
+        alignSelf: 'center'
     },
     update_button_text: {
         fontSize: 20,
