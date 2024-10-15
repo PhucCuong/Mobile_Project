@@ -1,17 +1,35 @@
 import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions } from 'react-native';
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FontAwesome } from '@expo/vector-icons';
+import axios from 'axios';
+
 
 const screenWidth = Dimensions.get('window').width;
 
-export default DashboardScreen = ({navigation}) => {
+export default DashboardScreen = ({ navigation, route }) => {
 
-    // get user lên server để lấy thông tin user render ra giao diện
-    const user = {
-        avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPVt9ionGvLO1eu6gr5FSxk79tbH92EYE8jQ&s',
-        user_name: 'Cường',
-        id: 1,
-    }
+    const [user, setUser] = useState({
+        avatar: '',
+        user_name: '',
+        phone_number: '',
+        location: '',
+        gender: '',
+    });
+
+    const id = route.params.id
+
+    useEffect(() => {
+        const fetchCustomer = async () => {
+            try {
+                const response = await axios.get(`http://192.168.1.17:3000/customer/${id}`);
+                setUser(response.data); // Đặt thành response.data
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchCustomer();
+    }, []);
 
     // Gửi get lên sever để lấy thông tin các địa điểm để render ra giao diện
     let tourist_list = [
@@ -125,9 +143,9 @@ export default DashboardScreen = ({navigation}) => {
     // Lọc Categories theo ô tìm kiếm
 
     const [searchValue, setSearchValue] = useState('')
-    const renderTourist = tourist_list.filter((item) => 
+    const renderTourist = tourist_list.filter((item) =>
         item.tourist_name.toLowerCase().includes(searchValue.toLowerCase())
-    ) 
+    )
     ///////////////////////////
 
     const [acctivedPage, setAcctivedPage] = useState('home')
@@ -187,11 +205,11 @@ export default DashboardScreen = ({navigation}) => {
     };
 
     const goToDetailScreen = (id) => {
-        navigation.navigate('DetailScreen', {id: id})
+        navigation.navigate('DetailScreen', { id: id })
     }
 
     const gotoCategoriesListScreen = (endpoint) => {
-        navigation.navigate('CategoriesList', {category: endpoint})
+        navigation.navigate('CategoriesList', { category: endpoint })
     }
 
     return (
@@ -212,7 +230,7 @@ export default DashboardScreen = ({navigation}) => {
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => {
-                            navigation.navigate('UserInfoScreen', {_id: user.id})
+                            navigation.navigate('UserInfoScreen', { _id: user.id })
                         }}
                     >
                         <Image source={{ uri: user.avatar }} style={styles.avatar} />
@@ -243,9 +261,9 @@ export default DashboardScreen = ({navigation}) => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.categories_row}>
-                    <TouchableOpacity 
-                    style={styles.categories_button}
-                    onPress={() => gotoCategoriesListScreen('restaurants')}
+                    <TouchableOpacity
+                        style={styles.categories_button}
+                        onPress={() => gotoCategoriesListScreen('restaurants')}
                     >
                         <View style={styles.icon_container}>
                             <FontAwesome name="cutlery" size={24} color="white" />
@@ -253,9 +271,9 @@ export default DashboardScreen = ({navigation}) => {
                         <Text style={styles.categories_text}>Restaurants</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity 
-                    style={styles.categories_button}
-                    onPress={() => gotoCategoriesListScreen('hotels')}
+                    <TouchableOpacity
+                        style={styles.categories_button}
+                        onPress={() => gotoCategoriesListScreen('hotels')}
                     >
                         <View style={styles.icon_container}>
                             <FontAwesome name="building" size={24} color="white" />
@@ -263,9 +281,9 @@ export default DashboardScreen = ({navigation}) => {
                         <Text style={styles.categories_text}>Hotels</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity 
-                    style={styles.categories_button}
-                    onPress={() => gotoCategoriesListScreen('beaches')}
+                    <TouchableOpacity
+                        style={styles.categories_button}
+                        onPress={() => gotoCategoriesListScreen('beaches')}
                     >
                         <View style={styles.icon_container}>
                             <FontAwesome name="bath" size={24} color="white" />
@@ -273,9 +291,9 @@ export default DashboardScreen = ({navigation}) => {
                         <Text style={styles.categories_text}>Beaches</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity 
-                    style={styles.categories_button}
-                    onPress={() => gotoCategoriesListScreen('coffees')}
+                    <TouchableOpacity
+                        style={styles.categories_button}
+                        onPress={() => gotoCategoriesListScreen('coffees')}
                     >
                         <View style={styles.icon_container}>
                             <FontAwesome name="coffee" size={24} color="white" />

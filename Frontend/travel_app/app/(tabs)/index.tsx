@@ -43,7 +43,7 @@ export default function HomeScreen() {
   }
   ///////////////
   return (
-    <Stack.Navigator initialRouteName='DashboardScreen'>
+    <Stack.Navigator initialRouteName='WelcomeScreen'>
       <Stack.Screen
         name="WelcomeScreen"
         component={WelcomeScreen}

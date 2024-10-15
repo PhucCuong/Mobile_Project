@@ -13,7 +13,6 @@ export default UserInfoScreen = ({ navigation, route }) => {
     const user = {
         avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPVt9ionGvLO1eu6gr5FSxk79tbH92EYE8jQ&s',
         user_name: 'Cường',
-        id: 1,
         phone_number: '012345678',
         location: 'Viet Nam',
         gender: 'Male'

@@ -1,13 +1,28 @@
 import { Text, View, ScrollView, ImageBackground, StyleSheet, Dimensions, TouchableOpacity, TextInput } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';  //import chuyển màu linear
+import { useState } from 'react';
+import axios from 'axios'
 const { width } = Dimensions.get('window');
 
 export default LoginScreen = ({ navigation }) => {
     const enterRegister = () => {
         navigation.navigate('RegisterScreen')
     }
-    const enterLoginFail = () => {
-        navigation.navigate('LoginFail')
+
+    const [userName, setUserName] = useState('')
+    const [password, setPassword] = useState('')
+    const handleLogin = async () => {
+        
+        axios.post('http://192.168.1.17:3000/customer/login', {
+            user_name: userName,
+            password: password,
+          })
+            .then(response => {
+                navigation.navigate('DashboardScreen', {id: response.data._id})
+            })
+            .catch(error => {
+                navigation.navigate('LoginFail')
+            });
     }
     return (
         <View style={styles.container}>
@@ -28,18 +43,21 @@ export default LoginScreen = ({ navigation }) => {
                     <TextInput
                         style={[styles.input]}
                         placeholder='Username'
-                        placeholderTextColor = "#B0B0B0"
+                        placeholderTextColor="#B0B0B0"
+                        onChangeText={(value) => setUserName(value)}
                     />
                     <TextInput
                         style={styles.input}
                         placeholder='Password'
-                        placeholderTextColor = "#B0B0B0"
+                        placeholderTextColor="#B0B0B0"
+                        onChangeText={(value) => setPassword(value)}
+                        secureTextEntry={true}
                     />
                 </View>
                 <View style={{ marginTop: 40 }}>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={enterLoginFail}
+                        onPress={handleLogin}
                     >
                         <Text style={styles.button_text}>
                             Login
