@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';  //import chuyển màu l
 import { useState } from 'react';
 import axios from 'axios'
 const { width } = Dimensions.get('window');
+import ip from '../../assets/ip/Ip.js'
 
 export default LoginScreen = ({ navigation }) => {
     const enterRegister = () => {
@@ -13,7 +14,7 @@ export default LoginScreen = ({ navigation }) => {
     const [password, setPassword] = useState('')
     const handleLogin = async () => {
         
-        axios.post('http://192.168.1.17:3000/customer/login', {
+        axios.post(`${ip}/customer/login`, {
             user_name: userName,
             password: password,
           })

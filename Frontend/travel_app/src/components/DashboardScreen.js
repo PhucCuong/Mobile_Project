@@ -2,6 +2,7 @@ import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, S
 import { useState, useEffect } from 'react'
 import { FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
+import ip from '../../assets/ip/Ip.js'
 
 
 const screenWidth = Dimensions.get('window').width;
@@ -21,7 +22,7 @@ export default DashboardScreen = ({ navigation, route }) => {
     useEffect(() => {
         const fetchCustomer = async () => {
             try {
-                const response = await axios.get(`http://192.168.1.17:3000/customer/${id}`);
+                const response = await axios.get(`${ip}/customer/${id}`);
                 setUser(response.data); // Đặt thành response.data
             } catch (error) {
                 console.log(error);

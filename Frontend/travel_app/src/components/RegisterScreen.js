@@ -1,8 +1,72 @@
-import { Text, View, ScrollView, ImageBackground, StyleSheet, Dimensions, TouchableOpacity, TextInput } from 'react-native'
+import { Text, View, ScrollView, ImageBackground, StyleSheet, Dimensions, TouchableOpacity, TextInput, Alert } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';  //import chuyển màu linear
 const { width } = Dimensions.get('window');
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import ip from '../../assets/ip/Ip.js'
+
+const default_avatar = 'https://as2.ftcdn.net/v2/jpg/05/49/98/39/1000_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg'
 
 export default RegisterScreen = ({ navigation }) => {
+
+    const [userName, setUserName] = useState('')
+    const [password, setPassword] = useState('')
+    const [retypePassword, setRetypePassword] = useState('')
+
+    const handleRegister = async () => {
+        if (password !== retypePassword) {
+            Alert.alert('mai mật khẩu phải giống nhau!')
+            return
+        }
+        try {
+            const response = await axios.post(`${ip}/register`, {
+                avatar: default_avatar,
+                user_name: userName,
+                password: password,
+                phone_number: '',
+                location: '',
+                gender: ''
+            });
+
+            console.log(response.data.message);
+            Alert.alert(
+                'Thông báo',
+                response.data.message,
+                [
+                    {
+                        text: 'Hủy',
+                        onPress: () => console.log('Nhấn Hủy'),
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'OK',
+                        onPress: () => {
+                            navigation.navigate('LoginScreen')
+                        },
+                    },
+                ],
+                { cancelable: false } // Không cho phép tắt Alert bằng cách nhấn bên ngoài
+            );
+        } catch (error) {
+            if (error.response) {
+                // Nếu có phản hồi từ server (mã trạng thái không phải 2xx)
+                if (error.response.status === 400) {
+                    console.error(error.response.data.message); // Tên người dùng đã tồn tại
+                    Alert.alert(error.response.data.message)
+                } else {
+                    console.error('Đã xảy ra lỗi:', error.response.status); // Lỗi khác
+                    Alert.alert(error.response.status)
+                }
+            } else if (error.request) {
+                // Nếu không có phản hồi từ server
+                console.error('Không nhận được phản hồi từ server:', error.request);
+            } else {
+                // Lỗi khi thiết lập yêu cầu
+                console.error('Lỗi:', error.message);
+            }
+        }
+    }
+
     const enterLogin = () => {
         navigation.navigate('LoginScreen')
     }
@@ -25,23 +89,26 @@ export default RegisterScreen = ({ navigation }) => {
                     <TextInput
                         style={[styles.input]}
                         placeholder='Username'
-                        placeholderTextColor = "#B0B0B0"
+                        placeholderTextColor="#B0B0B0"
+                        onChangeText={(value) => setUserName(value)}
                     />
                     <TextInput
                         style={styles.input}
                         placeholder='Password'
-                        placeholderTextColor = "#B0B0B0"
+                        placeholderTextColor="#B0B0B0"
+                        onChangeText={(value) => setPassword(value)}
                     />
                     <TextInput
                         style={styles.input}
                         placeholder='Retype Password'
-                        placeholderTextColor = "#B0B0B0"
+                        placeholderTextColor="#B0B0B0"
+                        onChangeText={(value) => setRetypePassword(value)}
                     />
                 </View>
                 <View style={{ marginTop: 40 }}>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={enterLogin}
+                        onPress={handleRegister}
                     >
                         <Text style={styles.button_text}>
                             Register
