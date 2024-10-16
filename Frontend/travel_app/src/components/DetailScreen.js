@@ -1,12 +1,41 @@
 import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, SafeAreaView } from 'react-native';
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FontAwesome } from '@expo/vector-icons';
+import ip from '../../assets/ip/Ip.js'
+import axios from 'axios';
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
 export default DetailScreen = ({ navigation, route }) => {
     const id = route.params.id
+
+    const [tourlist, setTourlist] = useState({
+        id: 2,
+        img: '',
+        tourist_name: '',
+        location: '',
+        like_user: [
+        
+        ],
+        distance: '',
+        description: '',
+        price: '',
+        benerfics: [],
+    })
+    
+    const callapi = async () => {
+        try {
+            const response = await axios.get(`${ip}/tourlist/${id}`);
+            setTourlist(response.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        callapi()
+    }, [])
 
     // thực hiện call get api dựa vào tham số id để lấy về 1 tourist
     // aip gọi về gán vào biến tourist
@@ -41,7 +70,7 @@ export default DetailScreen = ({ navigation, route }) => {
     return (
         <View style={styles.container}>
             <Image
-                source={{ uri: tourist.img }}
+                source={{ uri: tourlist.img }}
                 style={styles.image}
             />
             <TouchableOpacity
@@ -54,7 +83,7 @@ export default DetailScreen = ({ navigation, route }) => {
             </TouchableOpacity>
             <View style={styles.content_container}>
                 <View style={styles.price_container}>
-                    <Text style={styles.price_text}>{tourist.price}</Text>
+                    <Text style={styles.price_text}>{tourlist.price}</Text>
                 </View>
                 <ScrollView>
                     <View style={styles.row_star}>
@@ -66,13 +95,13 @@ export default DetailScreen = ({ navigation, route }) => {
                         <Text>4.9</Text>
                     </View>
 
-                    <Text style={styles.tourist_name}>{tourist.tourist_name}</Text>
+                    <Text style={styles.tourist_name}>{tourlist.tourist_name}</Text>
 
-                    <Text style={styles.location_name}>{tourist.location}</Text>
+                    <Text style={styles.location_name}>{tourlist.location}</Text>
 
                     <View style={styles.benerfic_row}>
                         {
-                            tourist.benerfics.map((item, index) => (
+                            tourlist.benerfics.map((item, index) => (
                                 <View key={index} style={styles.benerfic_item}>
                                     <Text style={styles.benerfic_text}>
                                         {item}
@@ -85,12 +114,12 @@ export default DetailScreen = ({ navigation, route }) => {
                     <Text style={styles.descript_title}>Description</Text>
 
 
-                    <Text style={styles.description_text}>{tourist.description}</Text>
+                    <Text style={styles.description_text}>{tourlist.description}</Text>
                     <View style={styles.over}></View>
 
                     <View style={styles.avatar_row}>
                         {
-                            tourist.like_user.map((item, index) => (
+                            tourlist.like_user.map((item, index) => (
                                 <View key={index}>
                                     <Image
                                         source={{ uri: item.avatar }}

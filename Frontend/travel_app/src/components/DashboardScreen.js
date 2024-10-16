@@ -90,11 +90,12 @@ export default DashboardScreen = ({ navigation, route }) => {
     };
 
     const goToDetailScreen = (id) => {
+        console.log(id)
         navigation.navigate('DetailScreen', { id: id })
     }
 
     const gotoCategoriesListScreen = (endpoint) => {
-        navigation.navigate('CategoriesList', { category: endpoint })
+        navigation.navigate('CategoriesList', { type: endpoint })
     }
 
     return (
@@ -206,7 +207,7 @@ export default DashboardScreen = ({ navigation, route }) => {
                             <TouchableOpacity
                                 style={styles.location_item}
                                 key={index}
-                                onPress={() => goToDetailScreen(item.id)}
+                                onPress={() => goToDetailScreen(item._id)}
                             >
                                 <Image
                                     style={styles.location_image}

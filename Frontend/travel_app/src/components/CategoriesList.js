@@ -1,18 +1,43 @@
 import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions } from 'react-native';
 import { useState, useEffect, useRef } from 'react'
 import { FontAwesome } from '@expo/vector-icons';
+import axios from 'axios';
+import ip from '../../assets/ip/Ip.js'
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 export default CategoriesList = ({ navigation, route }) => {
-    const endpoint = route.params.category
+    const endpoint = route.params.type
 
     const [page, setPage] = useState(endpoint)  // sử dụng thêm useEffect ràng buộc là "page" để call api mỗi lần chuyển trang
 
     background = 'https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3MjAxN3wwfDF8c2VhcmNofDI3fHx0cmF2ZWx8ZW58MHx8fHwxNzI4ODMyMzgyfDA&ixlib=rb-4.0.3&q=85&q=85&fmt=jpg&crop=entropy&cs=tinysrgb&w=450'
 
+    const [restaurantList, setRestaurantList] = useState([])
+    const [hotelList, setHotelList] = useState([])
+    const [beachList, setBeachList] = useState([])
+    const [coffeeList, setCoffeeList] = useState([])
 
+    const callApi = async () => {
+        try {
+            const response_restaurant = await axios.get(`${ip}/Restaurant`)
+            const response_hotel = await axios.get(`${ip}/Hotel`)
+            const response_beach = await axios.get(`${ip}/Beach`)
+            const response_coffee = await axios.get(`${ip}/CoffeeShop`)
+
+            setRestaurantList(response_restaurant.data)
+            setHotelList(response_hotel.data)
+            setBeachList(response_beach.data)
+            setCoffeeList(response_coffee.data)
+        } catch(error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        callApi()
+    }, [])
 
     // truyền endpoint để gọi phương thức get lấy api trả về categories_list
     let categories_list = [
@@ -57,12 +82,16 @@ export default CategoriesList = ({ navigation, route }) => {
 
         if (index === 0) {
             setPage('restaurants')
+            // categories_list = restaurantList
         } else if (index === 1) {
             setPage('hotels')
+            // categories_list = hotelList
         } else if (index === 2) {
             setPage('beaches')
+            // categories_list = beachList
         } else if (index === 3) {
             setPage('coffees')
+            // categories_list = coffeeList
         }
     }
 
@@ -127,10 +156,10 @@ export default CategoriesList = ({ navigation, route }) => {
                 <ScrollView style={styles.one_page}>
                     <Text style={styles.list_title}>favorite Restaurants</Text>
                     <View style={styles.content}>
-                        {categories_list.map((item, index) => (
+                        {restaurantList.map((item, index) => (
                             <TouchableOpacity
                                 key={index}
-                                style={styles.category_container}
+                                style={[styles.category_container, {backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE'}]}
                             >
                                 <Image
                                     source={{ uri: item.img }}
@@ -165,10 +194,10 @@ export default CategoriesList = ({ navigation, route }) => {
                 <ScrollView style={styles.one_page}>
                     <Text style={styles.list_title}>favorite Hotels</Text>
                     <View style={styles.content}>
-                        {categories_list.map((item, index) => (
+                        {hotelList.map((item, index) => (
                             <TouchableOpacity
                                 key={index}
-                                style={styles.category_container}
+                                style={[styles.category_container, {backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE'}]}
                             >
                                 <Image
                                     source={{ uri: item.img }}
@@ -203,10 +232,10 @@ export default CategoriesList = ({ navigation, route }) => {
                 <ScrollView style={styles.one_page}>
                     <Text style={styles.list_title}>favorite Beaches</Text>
                     <View style={styles.content}>
-                        {categories_list.map((item, index) => (
+                        {beachList.map((item, index) => (
                             <TouchableOpacity
                                 key={index}
-                                style={styles.category_container}
+                                style={[styles.category_container, {backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE'}]}
                             >
                                 <Image
                                     source={{ uri: item.img }}
@@ -241,10 +270,10 @@ export default CategoriesList = ({ navigation, route }) => {
                 <ScrollView style={styles.one_page}>
                     <Text style={styles.list_title}>favorite Coffees</Text>
                     <View style={styles.content}>
-                        {categories_list.map((item, index) => (
+                        {coffeeList.map((item, index) => (
                             <TouchableOpacity
                                 key={index}
-                                style={styles.category_container}
+                                style={[styles.category_container, {backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE'}]}
                             >
                                 <Image
                                     source={{ uri: item.img }}
@@ -336,7 +365,7 @@ const styles = StyleSheet.create({
         height: '100%'
     },
     category_container: {
-        backgroundColor: '#E6F2E9',
+        // backgroundColor: '#E6F2E9',
         height: 98,
         width: '100%',
         marginTop: 30,
