@@ -9,6 +9,7 @@ import { useIsFocused } from '@react-navigation/native';
 const screenWidth = Dimensions.get('window').width;
 
 export default DashboardScreen = ({ navigation, route }) => {
+    const id = route.params.id
 
     const isFocused = useIsFocused();
 
@@ -20,7 +21,7 @@ export default DashboardScreen = ({ navigation, route }) => {
         gender: '',
     });
 
-    const id = route.params.id
+    const [tourlist, setTourlist] = useState([])
 
     // hàm call api lấy thông tin người dùng
     const fetchCustomer = async () => {
@@ -32,123 +33,25 @@ export default DashboardScreen = ({ navigation, route }) => {
         }
     };
 
+    // hàm call api lấy thông tin tourlist
+    const fetchTourlist = async () => {
+        try {
+            const response = await axios.get(`${ip}/tourlist`);
+            setTourlist(response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
         fetchCustomer();
+        fetchTourlist()
     }, [isFocused]);
-
-    // Gửi get lên sever để lấy thông tin các địa điểm để render ra giao diện
-    let tourist_list = [
-        {
-            id: 1,
-            img: 'https://images.pexels.com/photos/2265876/pexels-photo-2265876.jpeg?auto=compress&cs=tinysrgb&w=600',
-            tourist_name: 'Nungwi ',
-            location: 'Tanzania',
-            like_user: [
-                {
-                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCU9NOBsw3ZYwS1nGnktFBAbFFWRPIVx9BsA&s',
-                    user_name: 'Alex',
-                },
-                {
-                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCU9NOBsw3ZYwS1nGnktFBAbFFWRPIVx9BsA&s',
-                    user_name: 'Anna',
-                },
-                {
-                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYROR0fm8scNmYMwKBN2HpD2Bddj6JeJtCkw&s',
-                    user_name: 'Kudo',
-                },
-            ],
-            distance: '2,5 km',
-            description: 'Bãi biển Nungwi ở phía bắc quần đảo Zanzibar giờ đã trở thành điểm du lịch nghỉ mát nổi tiếng của Tanzania. Màu xanh ngọc bích của biển cả xen lẫn ráng vàng của hoàng hôn hẳn là khung cảnh lãng mạn nhất mà bạn muốn ngắm nhìn mỗi dịp đến đây.',
-            price: '560$/Day',
-            benerfics: ['sightseeing', 'buffeet', 'hotel'],
-        },
-        {
-            id: 2,
-            img: 'https://images.pexels.com/photos/2174656/pexels-photo-2174656.jpeg?auto=compress&cs=tinysrgb&w=600',
-            tourist_name: 'Rabbit',
-            location: 'Italy',
-            like_user: [
-                {
-                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCU9NOBsw3ZYwS1nGnktFBAbFFWRPIVx9BsA&s',
-                    user_name: 'Alex',
-                },
-                {
-                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCU9NOBsw3ZYwS1nGnktFBAbFFWRPIVx9BsA&s',
-                    user_name: 'Anna',
-                },
-                {
-                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYROR0fm8scNmYMwKBN2HpD2Bddj6JeJtCkw&s',
-                    user_name: 'Kudo',
-                },
-                {
-                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPVt9ionGvLO1eu6gr5FSxk79tbH92EYE8jQ&s',
-                    user_name: 'Cường'
-                }
-            ],
-            distance: '23,7 km',
-            description: 'Bãi biển Rabbit sở hữu những vách đá trắng, nước trong xanh tinh khiết, nhiệt độ ấm áp và cảnh quan đẹp mê hồn. Tới đây, du khách sẽ có dịp chiêm ngưỡng những chú rùa đẻ trứng và cá heo thỉnh thoảng nhô lên mặt nước.',
-            price: '320$/Day',
-            benerfics: ['sightseeing', 'buffeet', 'hotel'],
-        },
-        {
-            id: 3,
-            img: 'https://images.pexels.com/photos/586687/pexels-photo-586687.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-            tourist_name: 'Railay',
-            location: 'Thái Lan',
-            like_user: [
-                {
-                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCU9NOBsw3ZYwS1nGnktFBAbFFWRPIVx9BsA&s',
-                    user_name: 'Alex',
-                },
-                {
-                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCU9NOBsw3ZYwS1nGnktFBAbFFWRPIVx9BsA&s',
-                    user_name: 'Anna',
-                },
-                {
-                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYROR0fm8scNmYMwKBN2HpD2Bddj6JeJtCkw&s',
-                    user_name: 'Kudo',
-                },
-            ],
-            distance: '10,4 km',
-            description: 'Đây là một trong những bãi biển đẹp rất được ưa thích cho du khách du lịch Thái Lan lặn biển vì nước rất trong, nhìn đến tận đáy. Tầng tầng lớp lớp san hô mọc dưới đáy biển, cá lội tung tăng, có cả hải quỳ và sên biển màu tím.',
-            price: '100/Day',
-            benerfics: ['sightseeing', 'buffeet', 'hotel'],
-        },
-        {
-            id: 4,
-            img: 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-            tourist_name: 'Whitehaven',
-            location: 'Úc',
-            like_user: [
-                {
-                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCU9NOBsw3ZYwS1nGnktFBAbFFWRPIVx9BsA&s',
-                    user_name: 'Alex',
-                },
-                {
-                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCU9NOBsw3ZYwS1nGnktFBAbFFWRPIVx9BsA&s',
-                    user_name: 'Anna',
-                },
-                {
-                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYROR0fm8scNmYMwKBN2HpD2Bddj6JeJtCkw&s',
-                    user_name: 'Kudo',
-                },
-                {
-                    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPVt9ionGvLO1eu6gr5FSxk79tbH92EYE8jQ&s',
-                    user_name: 'Cường'
-                }
-
-            ],
-            distance: '21,2 km',
-            description: 'Whitehaven hẻo lánh tại công viên quốc gia đảo Whitsunday có đường bờ biển tuyệt đẹp, không người sinh sống là bãi biển đẹp nhất xứ sở chuột túi. Whitehaven sở hữu làn nước trong xanh như ngọc và bãi cát trắng nhất trên thế giới.',
-            price: '400/Day',
-            benerfics: ['sightseeing', 'buffeet', 'hotel'],
-        },
-    ]
 
     // Lọc Categories theo ô tìm kiếm
 
     const [searchValue, setSearchValue] = useState('')
-    const renderTourist = tourist_list.filter((item) =>
+    const renderTourist = tourlist.filter((item) =>
         item.tourist_name.toLowerCase().includes(searchValue.toLowerCase())
     )
     ///////////////////////////
@@ -158,53 +61,43 @@ export default DashboardScreen = ({ navigation, route }) => {
         setAcctivedPage(page_name)
     }
 
-    const toggle_like = (id) => {
-        // Tìm vị trí của item trong tourist_list dựa trên id
-        const locationIndex = tourist_list.findIndex(location => location.id === id);
+    const toggle_like = async (id) => {
+        try {
+            const response = await axios.put(`${ip}/tourlist/like/${id}`, {
+                avatar: user.avatar,
+                user_name: user.user_name
+            });
+            // console.log(response.data[0].like_user)
+            setTourlist(response.data)
 
-        if (locationIndex !== -1) {
-            // Kiểm tra xem user đã có trong mảng like_user hay chưa
-            const userIndex = tourist_list[locationIndex].like_user.findIndex(likeUser =>
-                likeUser.user_name === user.user_name
-            );
-
-            if (userIndex === -1) {
-                // Nếu user không tồn tại trong mảng like_user, thêm user vào
-                tourist_list[locationIndex].like_user.push({
-                    avatar: user.avatar,
-                    user_name: user.user_name
-                });
-                console.log('User added to like list');
+        } catch (error) {
+            if (error.response) {
+                // Server responded with a status other than 200 range
+                console.error('Error response:', error.response.data);
+                console.error('Error status:', error.response.status);
+            } else if (error.request) {
+                // Request was made but no response received
+                console.error('Error request:', error.request);
             } else {
-                // Nếu user đã tồn tại trong mảng like_user, xóa user khỏi mảng
-                tourist_list[locationIndex].like_user.splice(userIndex, 1);
-                console.log('User removed from like list');
+                // Something happened in setting up the request
+                console.error('Error message:', error.message);
             }
-
-            /////////////////////////////////////////////////////////////////////////
-            //  GỬI PUT LÊN SERVER ĐỂ THÊM HOẶC XOÁ USER LIKE RỒI GET VỀ LẠI ĐỂ TONGGLE TYM
-
-
-        } else {
-            console.log('Location not found');
         }
 
-        // Kiểm tra lại mảng tourist_list sau khi cập nhật
-        console.log(tourist_list[locationIndex]);
     }
 
     // hàm kiểm tra xem user đang sử dụng app có trong danh sách những user đã like của từng location hay không
     const checkUserInLikeList = (id, user) => {
         // Kiểm tra xem index có hợp lệ không
-        if (index < 0 || index >= tourist_list.length) {
+        if (index < 0 || index >= tourlist.length) {
             return false; // Nếu index không hợp lệ, trả về false
         }
 
         // tìm index
-        let index = tourist_list.findIndex(item => item.id === id)
+        let index = tourlist.findIndex(item => item.id === id)
 
         // Sử dụng some() để kiểm tra xem user có tồn tại trong like_user không
-        return tourist_list[index].like_user.some(likeUser =>
+        return tourlist[index].like_user.some(likeUser =>
             likeUser.user_name === user.user_name
         );
     };
@@ -236,7 +129,7 @@ export default DashboardScreen = ({ navigation, route }) => {
                     <TouchableOpacity
                         onPress={() => {
                             const endpoint = user._id
-                            navigation.navigate('UserInfoScreen', { _id: endpoint})
+                            navigation.navigate('UserInfoScreen', { _id: endpoint })
                         }}
                     >
                         <Image source={{ uri: user.avatar }} style={styles.avatar} />
@@ -321,7 +214,7 @@ export default DashboardScreen = ({ navigation, route }) => {
             <View style={styles.scrooll_row}>
                 <ScrollView
                     horizontal
-                    contentContainerStyle={{ width: tourist_list.length * (156 + 16), height: 233 }}
+                    contentContainerStyle={{ width: tourlist.length * (156 + 16), height: 233 }}
                     showsHorizontalScrollIndicator={false}
                 >
                     {
@@ -340,7 +233,7 @@ export default DashboardScreen = ({ navigation, route }) => {
                                 </View>
                                 <TouchableOpacity
                                     style={styles.tym_container}
-                                    onPress={() => toggle_like(item.id)}
+                                    onPress={() => toggle_like(item._id)}
                                 >
                                     <FontAwesome name="heart" size={18} color={
                                         checkUserInLikeList(item.id, user) === true ? 'blue' : 'white'
@@ -365,7 +258,12 @@ export default DashboardScreen = ({ navigation, route }) => {
                                     </View>
                                 </View>
 
-                                <Text style={styles.distance}>{item.distance}</Text>
+                                <Text
+                                    style={styles.distance}
+                                    numberOfLines={1}
+                                >
+                                    {item.distance}
+                                </Text>
                             </TouchableOpacity>
                         ))
                     }
@@ -586,19 +484,21 @@ const styles = StyleSheet.create({
     tourist_name: {
         fontSize: 16,
         fontFamily: 'OpenSans-Semibold',
+        marginTop: 8
     },
     distance: {
         fontSize: 10,
         color: '#B0B0B0',
         position: 'absolute',
-        bottom: 18,
-        right: 12
+        bottom: 10,
+        right: 12,
+        width: '85%'
     },
     users_row: {
         flexDirection: 'row',
         position: 'absolute',
         left: 16,
-        bottom: 14,
+        bottom: 24,
         paddingLeft: 10,
         maxWidth: 100,
         overflow: 'hidden'
