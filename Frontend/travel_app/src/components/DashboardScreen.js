@@ -60,6 +60,7 @@ export default DashboardScreen = ({ navigation, route }) => {
     const page_acction = (page_name) => {
         setAcctivedPage(page_name)
     }
+    
 
     const toggle_like = async (id) => {
         try {
@@ -67,9 +68,7 @@ export default DashboardScreen = ({ navigation, route }) => {
                 avatar: user.avatar,
                 user_name: user.user_name
             });
-            // console.log(response.data[0].like_user)
             setTourlist(response.data)
-
         } catch (error) {
             if (error.response) {
                 // Server responded with a status other than 200 range
@@ -83,23 +82,11 @@ export default DashboardScreen = ({ navigation, route }) => {
                 console.error('Error message:', error.message);
             }
         }
-
     }
-
     // hàm kiểm tra xem user đang sử dụng app có trong danh sách những user đã like của từng location hay không
-    const checkUserInLikeList = (id, user) => {
-        // Kiểm tra xem index có hợp lệ không
-        if (index < 0 || index >= tourlist.length) {
-            return false; // Nếu index không hợp lệ, trả về false
-        }
-
-        // tìm index
-        let index = tourlist.findIndex(item => item.id === id)
-
-        // Sử dụng some() để kiểm tra xem user có tồn tại trong like_user không
-        return tourlist[index].like_user.some(likeUser =>
-            likeUser.user_name === user.user_name
-        );
+    const checkUserInLikeList = (i) => {
+        const exists = tourlist[i].like_user.some(item => item.user_name === user.user_name)
+        return exists
     };
 
     const goToDetailScreen = (id) => {
@@ -155,9 +142,6 @@ export default DashboardScreen = ({ navigation, route }) => {
             <View style={styles.categories_container}>
                 <View style={styles.title_row}>
                     <Text style={styles.tiltle_text}>Categories</Text>
-                    <TouchableOpacity>
-                        <Text style={styles.viewall_text}>View all</Text>
-                    </TouchableOpacity>
                 </View>
                 <View style={styles.categories_row}>
                     <TouchableOpacity
@@ -236,7 +220,7 @@ export default DashboardScreen = ({ navigation, route }) => {
                                     onPress={() => toggle_like(item._id)}
                                 >
                                     <FontAwesome name="heart" size={18} color={
-                                        checkUserInLikeList(item.id, user) === true ? 'blue' : 'white'
+                                        checkUserInLikeList(index) === true ? 'blue' : 'white'
                                     } />
                                 </TouchableOpacity>
                                 <Text style={styles.tourist_name}>{item.tourist_name}</Text>
@@ -251,11 +235,6 @@ export default DashboardScreen = ({ navigation, route }) => {
                                             />
                                         ))
                                     }
-                                    <View style={styles.plus}>
-                                        <Text style={styles.plus_text}>
-                                            +99
-                                        </Text>
-                                    </View>
                                 </View>
 
                                 <Text
