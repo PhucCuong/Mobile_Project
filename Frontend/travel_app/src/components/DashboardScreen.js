@@ -90,8 +90,7 @@ export default DashboardScreen = ({ navigation, route }) => {
     };
 
     const goToDetailScreen = (id) => {
-        console.log(id)
-        navigation.navigate('DetailScreen', { id: id })
+        navigation.navigate('DetailScreen', { id: id , user_info: user})
     }
 
     const gotoCategoriesListScreen = (endpoint) => {

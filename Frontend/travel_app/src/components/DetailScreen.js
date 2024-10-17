@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, SafeAreaView } from 'react-native';
+import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, SafeAreaView, Alert } from 'react-native';
 import { useState, useEffect } from 'react'
 import { FontAwesome } from '@expo/vector-icons';
 import ip from '../../assets/ip/Ip.js'
@@ -9,6 +9,7 @@ const screenWidth = Dimensions.get('window').width;
 
 export default DetailScreen = ({ navigation, route }) => {
     const id = route.params.id
+    const user = route.params.user_info
 
     const [tourlist, setTourlist] = useState({
         id: 2,
@@ -16,14 +17,14 @@ export default DetailScreen = ({ navigation, route }) => {
         tourist_name: '',
         location: '',
         like_user: [
-        
+
         ],
         distance: '',
         description: '',
         price: '',
         benerfics: [],
     })
-    
+
     const callapi = async () => {
         try {
             const response = await axios.get(`${ip}/tourlist/${id}`);
@@ -33,40 +34,38 @@ export default DetailScreen = ({ navigation, route }) => {
         }
     }
 
+    const bookingTourlistToApi = async () => {
+        try {
+            console.log("Calling API:", `${ip}/tourlist/booked/${id}`);
+            const response = await axios.put(`${ip}/tourlist/booked/${id}`, {
+                user_name: user.user_name,
+                avatar: user.avatar
+            });
+            if (response.status === 200) {
+                Alert.alert('Booked successfully')
+            } else {
+                Alert.alert('Booked failed')
+            }
+        } catch (error) {
+            if (error.response) {
+                // Server responded with a status other than 200 range
+                console.error('Error response:', error.response.data);
+                console.error('Error status:', error.response.status);
+            } else if (error.request) {
+                // Request was made but no response received
+                console.error('Error request:', error.request);
+            } else {
+                // Something happened in setting up the request
+                console.error('Error message:', error.message);
+            }
+        }
+    }
+
     useEffect(() => {
         callapi()
     }, [])
 
-    // thực hiện call get api dựa vào tham số id để lấy về 1 tourist
-    // aip gọi về gán vào biến tourist
-    const tourist = {
-        id: 2,
-        img: 'https://images.pexels.com/photos/2174656/pexels-photo-2174656.jpeg?auto=compress&cs=tinysrgb&w=600',
-        tourist_name: 'Rabbit',
-        location: 'Italy',
-        like_user: [
-            {
-                avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCU9NOBsw3ZYwS1nGnktFBAbFFWRPIVx9BsA&s',
-                user_name: 'Alex',
-            },
-            {
-                avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCU9NOBsw3ZYwS1nGnktFBAbFFWRPIVx9BsA&s',
-                user_name: 'Anna',
-            },
-            {
-                avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYROR0fm8scNmYMwKBN2HpD2Bddj6JeJtCkw&s',
-                user_name: 'Kudo',
-            },
-            {
-                avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPVt9ionGvLO1eu6gr5FSxk79tbH92EYE8jQ&s',
-                user_name: 'Cường'
-            }
-        ],
-        distance: '23,7 km',
-        description: 'Bãi biển Rabbit sở hữu những vách đá trắng, nước trong xanh tinh khiết, nhiệt độ ấm áp và cảnh quan đẹp mê hồn. Tới đây, du khách sẽ có dịp chiêm ngưỡng những chú rùa đẻ trứng và cá heo thỉnh thoảng nhô lên mặt nước.',
-        price: '320$/Day',
-        benerfics: ['sightseeing', 'buffeet', 'hotel'],
-    }
+
     return (
         <View style={styles.container}>
             <Image
@@ -130,12 +129,14 @@ export default DetailScreen = ({ navigation, route }) => {
                         }
                     </View>
 
-                    <TouchableOpacity style={styles.book_button}>
+                    <TouchableOpacity
+                        style={styles.book_button}
+                        onPress={() => bookingTourlistToApi()}
+                    >
                         <Text style={styles.button_text}>
                             Book Now
                         </Text>
                     </TouchableOpacity>
-
                 </ScrollView>
             </View>
         </View>

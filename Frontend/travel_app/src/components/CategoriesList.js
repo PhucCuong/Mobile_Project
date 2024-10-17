@@ -8,9 +8,9 @@ const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 export default CategoriesList = ({ navigation, route }) => {
-    const endpoint = route.params.type
+    const page_type = route.params.type
 
-    const [page, setPage] = useState(endpoint)  // sử dụng thêm useEffect ràng buộc là "page" để call api mỗi lần chuyển trang
+    const [page, setPage] = useState(page_type)  // sử dụng thêm useEffect ràng buộc là "page" để call api mỗi lần chuyển trang
 
     background = 'https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3MjAxN3wwfDF8c2VhcmNofDI3fHx0cmF2ZWx8ZW58MHx8fHwxNzI4ODMyMzgyfDA&ixlib=rb-4.0.3&q=85&q=85&fmt=jpg&crop=entropy&cs=tinysrgb&w=450'
 
@@ -30,46 +30,16 @@ export default CategoriesList = ({ navigation, route }) => {
             setHotelList(response_hotel.data)
             setBeachList(response_beach.data)
             setCoffeeList(response_coffee.data)
-        } catch(error) {
+        } catch (error) {
             console.log(error)
         }
+
+        if (page === 'restaurants') scrollViewRef.current.scrollTo({ x: screenWidth * 0, animated: false });
+        else if (page === 'hotels') scrollViewRef.current.scrollTo({ x: screenWidth * 1, animated: false });
+        else if (page === 'beaches') scrollViewRef.current.scrollTo({ x: screenWidth * 2, animated: false });
+        else if (page === 'coffees') scrollViewRef.current.scrollTo({ x: screenWidth * 3, animated: false });
     }
 
-    useEffect(() => {
-        callApi()
-    }, [])
-
-    // truyền endpoint để gọi phương thức get lấy api trả về categories_list
-    let categories_list = [
-        {
-            img: 'https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=600',
-            location: 'TP. HCM, Viet Nam',
-            category_name: 'Golden Gate',
-            description: 'Chuỗi nhà hàng Golden Gate là cái tên nổi bật nhất trong những chuỗi nhà hàng lớn và nổi tiếng tại Việt Nam nếu xét về quy mô lẫn doanh thu. Thành lập vào năm 2005, Golden Gate đã tiên phong áp dụng mô hình chuỗi nhà hàng, đến nay chuỗi nhà hàng Việt này phục vụ hơn 18 triệu lượt khách hàng mỗi năm với hơn 22 thương hiệu và hơn 500 nhà hàng phủ khắp trên 40 tỉnh thành.',
-            price: '20$/table',
-        },
-        {
-            img: 'https://images.pexels.com/photos/262047/pexels-photo-262047.jpeg?auto=compress&cs=tinysrgb&w=600',
-            location: 'TP. HCM, Viet Nam',
-            category_name: 'Goldsun Food',
-            description: 'Chuỗi nhà hàng Goldsun Food, hay GSF, có nguồn gốc từ Công ty Cổ phần Đầu tư Thương mại Quốc tế Mặt Trời Đỏ – Redsun ITI, thành lập từ ngày 19/2/2008. Sau hơn 10 năm hoạt động, công ty đã chuyển tên thành Goldsun Food – “Mặt trời Vàng” trong ngành ẩm thực tại Việt Nam. Với hơn 200 nhà hàng trên khắp cả nước, Goldsun Food đã nằm trong top các doanh nghiệp sở hữu nhiều thương hiệu ẩm thực nhất tại Việt Nam',
-            price: '13$/table',
-        },
-        {
-            img: 'https://images.pexels.com/photos/1581384/pexels-photo-1581384.jpeg?auto=compress&cs=tinysrgb&w=600',
-            location: 'Ha Noi, Viet Nam',
-            category_name: 'QSR Việt Nam',
-            description: 'một tên tuổi lớn trong ngành dịch vụ chuỗi nhà hàng tại Việt Nam, thành lập từ năm 2013. Với hệ thống gần 150 cửa hàng, QSR Việt Nam hiện đang hoạt động rộng khắp trong 20 tỉnh thành cả nước.',
-            price: '24$/table',
-        },
-        {
-            img: 'https://images.pexels.com/photos/92090/pexels-photo-92090.jpeg?auto=compress&cs=tinysrgb&w=600',
-            location: 'Da Nang, Viet Nam',
-            category_name: 'IN Dining',
-            description: 'IN Dining, trước đây là Nova F&B của Novaland, chính thức được mua lại và đổi tên thành IN Dining vào tháng 6/2023. Hiện chuỗi nhà hàng IN Dining được quản lý và vận hành bởi IN Holdings, đơn vị sở hữu và vận hành các thương hiệu như GEM Center, White Palace Hoàng Văn Thụ, White Palace Phạm Văn Đồng, The Log và W Gourmet. ',
-            price: '30$/table',
-        },
-    ]
     /////////////////////////////////////////
     const handleSelectedPage = (page_name, page_index) => {
         setPage(page_name)  // đổi màu chữ
@@ -99,6 +69,12 @@ export default CategoriesList = ({ navigation, route }) => {
     const scrollToIndex = (index) => {
         scrollViewRef.current.scrollTo({ x: screenWidth * index, animated: true });
     };
+
+    // select page khi moi tai trang
+
+    useEffect(() => {
+        callApi()
+    }, [])
 
     return (
         <View style={styles.container}>
@@ -159,7 +135,7 @@ export default CategoriesList = ({ navigation, route }) => {
                         {restaurantList.map((item, index) => (
                             <TouchableOpacity
                                 key={index}
-                                style={[styles.category_container, {backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE'}]}
+                                style={[styles.category_container, { backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE' }]}
                             >
                                 <Image
                                     source={{ uri: item.img }}
@@ -197,7 +173,7 @@ export default CategoriesList = ({ navigation, route }) => {
                         {hotelList.map((item, index) => (
                             <TouchableOpacity
                                 key={index}
-                                style={[styles.category_container, {backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE'}]}
+                                style={[styles.category_container, { backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE' }]}
                             >
                                 <Image
                                     source={{ uri: item.img }}
@@ -235,10 +211,10 @@ export default CategoriesList = ({ navigation, route }) => {
                         {beachList.map((item, index) => (
                             <TouchableOpacity
                                 key={index}
-                                style={[styles.category_container, {backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE'}]}
+                                style={[styles.category_container, { backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE' }]}
                             >
                                 <Image
-                                    source={{ uri: item.img }}
+                                    source={{ uri: item.image }}
                                     style={styles.category_image}
                                 />
 
@@ -273,7 +249,7 @@ export default CategoriesList = ({ navigation, route }) => {
                         {coffeeList.map((item, index) => (
                             <TouchableOpacity
                                 key={index}
-                                style={[styles.category_container, {backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE'}]}
+                                style={[styles.category_container, { backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE' }]}
                             >
                                 <Image
                                     source={{ uri: item.img }}
