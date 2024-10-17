@@ -12,6 +12,7 @@ import DashboardScreen from '../../src/components/DashboardScreen.js'
 import DetailScreen from '../../src/components/DetailScreen.js'
 import CategoriesList from '../../src/components/CategoriesList.js'
 import UserInfoScreen from '../../src/components/UserInfoScreen.js'
+import BookingRestaurant from '../../src/components/BookingRestaurant.js'
 
 
 ///   link font
@@ -43,7 +44,7 @@ export default function HomeScreen() {
   }
   ///////////////
   return (
-    <Stack.Navigator initialRouteName='WelcomeScreen'>
+    <Stack.Navigator initialRouteName='BookingRestaurant'>
       <Stack.Screen
         name="WelcomeScreen"
         component={WelcomeScreen}
@@ -82,6 +83,11 @@ export default function HomeScreen() {
       <Stack.Screen
         name="UserInfoScreen"
         component={UserInfoScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="BookingRestaurant"
+        component={BookingRestaurant}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

@@ -70,7 +70,9 @@ export default CategoriesList = ({ navigation, route }) => {
         scrollViewRef.current.scrollTo({ x: screenWidth * index, animated: true });
     };
 
-    // select page khi moi tai trang
+    const goToBookingRestaurantScreen = (id) => {
+        navigation.navigate('BookingRestaurant', {id: id})
+    }
 
     useEffect(() => {
         callApi()
@@ -136,6 +138,7 @@ export default CategoriesList = ({ navigation, route }) => {
                             <TouchableOpacity
                                 key={index}
                                 style={[styles.category_container, { backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE' }]}
+                                onPress={() => goToBookingRestaurantScreen(item._id)}
                             >
                                 <Image
                                     source={{ uri: item.img }}
