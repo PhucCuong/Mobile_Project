@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, SafeAreaView, Modal } from 'react-native';
+import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, SafeAreaView, Modal, Animated } from 'react-native';
 import { useState, useEffect, useRef } from 'react'
 import { FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
@@ -11,6 +11,49 @@ const screenHeight = Dimensions.get('window').height;
 
 export default BookingRestaurant = ({ navigation, route }) => {
     // const id = route.params.id
+
+    // xử lí thanh phần trăm
+    const widthMotion = useRef(new Animated.Value(90)).current
+
+    const handleTopRow = (width) => {
+        Animated.timing(widthMotion, {
+            toValue: width,
+            duration: 500,
+            useNativeDriver: false,
+        }).start()
+    }
+
+    const scrollViewRef = useRef(null)
+    const handleClickNextPage = (width) => {
+        handleTopRow(width)
+        if (width === 180) {
+            scrollViewRef.current.scrollTo({ x: screenWidth * 1, animated: true });
+        }
+        else if (width === 270) {
+            scrollViewRef.current.scrollTo({ x: screenWidth * 2, animated: true });
+        }
+    }
+
+    const handleClickPrevPage = () => {
+        const widthNumber = widthMotion.__getValue();
+        if(widthNumber === 270) {
+            handleTopRow(180)
+            scrollViewRef.current.scrollTo({ x: screenWidth * 1, animated: true });
+        } else if(widthNumber === 180) {
+            handleTopRow(90)
+            scrollViewRef.current.scrollTo({ x: screenWidth * 0, animated: true });
+        }
+    }
+
+    const handleScrollX = (e) => {
+        const contentOffsetX = e.nativeEvent.contentOffset.x
+        const index = Math.floor(contentOffsetX / screenWidth);
+        if (index === 0) handleTopRow(90)
+        else if (index === 1) handleTopRow(180)
+        else if (index === 2) handleTopRow(270)
+    }
+
+    // xử lí nút back
 
     const tables = [
         {
@@ -82,17 +125,22 @@ export default BookingRestaurant = ({ navigation, route }) => {
         >
             {/* màn hình đứng yên */}
             <View style={styles.first_row}>
-                <TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => handleClickPrevPage()}
+                >
                     <FontAwesome name="arrow-left" size={24} color="#252935" />
                 </TouchableOpacity>
                 <View style={styles.base_line}></View>
-                <View style={styles.up_line}></View>
+                <Animated.View style={[styles.up_line, { width: widthMotion }]}></Animated.View>
             </View>
 
             {/* màn hình scrollView */}
             <ScrollView
                 style={styles.container}
                 horizontal
+                ref={scrollViewRef}
+                pagingEnabled
+                onScroll={handleScrollX}
             >
                 {/* màn hình chọn đặt bàn */}
                 <View
@@ -116,6 +164,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
                     </View>
                     <TouchableOpacity
                         style={styles.button}
+                        onPress={() => handleClickNextPage(180)}
                     >
                         <Text
                             style={styles.button_text}
@@ -163,7 +212,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
                                 onConfirm={handleConfirmDate}
                                 onCancel={hideDatePicker}
                             />
-                            <FontAwesome name="chevron-down" size={15} color="#E1E3E7" style={styles.down_icon_left}/>
+                            <FontAwesome name="chevron-down" size={15} color="#E1E3E7" style={styles.down_icon_left} />
 
 
                             {/*  giờ */}
@@ -180,12 +229,13 @@ export default BookingRestaurant = ({ navigation, route }) => {
                                 onCancel={hideTimePicker}
                                 placeholderTextColor='#E1E3E7'
                             />
-                            <FontAwesome name="chevron-down" size={15} color="#E1E3E7" style={styles.down_icon_right}/>
+                            <FontAwesome name="chevron-down" size={15} color="#E1E3E7" style={styles.down_icon_right} />
                         </View>
                     </View>
 
                     <TouchableOpacity
                         style={styles.button}
+                        onPress={() => handleClickNextPage(270)}
                     >
                         <Text
                             style={styles.button_text}
@@ -198,45 +248,45 @@ export default BookingRestaurant = ({ navigation, route }) => {
                     style={styles.order_container}
                 >
                     <Text style={styles.restaurant_name}>Order Summary</Text>
-                    
+
                     <View style={styles.order_row}>
                         <Text style={styles.order_label}>Name</Text>
-                        <TextInput value='Phúc Cường' style={styles.order_value}/>
+                        <TextInput value='Phúc Cường' style={styles.order_value} />
                     </View>
 
                     <View style={styles.order_line}></View>
 
                     <View style={styles.order_row}>
                         <Text style={styles.order_label}>User Name</Text>
-                        <TextInput value='PhucCuong' style={styles.order_value}/>
+                        <TextInput value='PhucCuong' style={styles.order_value} />
                     </View>
 
                     <View style={styles.order_line}></View>
 
                     <View style={styles.order_row}>
                         <Text style={styles.order_label}>Phone Number</Text>
-                        <TextInput value='012345678' style={styles.order_value}/>
+                        <TextInput value='012345678' style={styles.order_value} />
                     </View>
 
                     <View style={styles.order_line}></View>
 
                     <View style={styles.order_row}>
                         <Text style={styles.order_label}>Date</Text>
-                        <TextInput value='01/01/2024' style={styles.order_value}/>
+                        <TextInput value='01/01/2024' style={styles.order_value} />
                     </View>
 
                     <View style={styles.order_line}></View>
 
                     <View style={styles.order_row}>
                         <Text style={styles.order_label}>Hour</Text>
-                        <TextInput value='13:00' style={styles.order_value}/>
+                        <TextInput value='13:00' style={styles.order_value} />
                     </View>
 
                     <View style={styles.order_final_line}></View>
 
                     <View style={styles.order_row}>
                         <Text style={styles.total_text}>Grand Total</Text>
-                        <TextInput value='80$' style={styles.total_text}/>
+                        <TextInput value='80$' style={styles.total_text} />
                     </View>
 
                     <TouchableOpacity
@@ -265,7 +315,7 @@ const styles = StyleSheet.create({
         left: 60
     },
     up_line: {
-        width: 90,
+        // width: widthMotion,
         height: 4,
         backgroundColor: '#252935',
         position: 'absolute',
@@ -368,12 +418,12 @@ const styles = StyleSheet.create({
     },
     down_icon_left: {
         position: 'absolute',
-        top: 33, 
+        top: 33,
         left: 130
     },
     down_icon_right: {
         position: 'absolute',
-        top: 33, 
+        top: 33,
         right: 10
     },
     order_row: {
