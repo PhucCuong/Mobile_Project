@@ -9,6 +9,7 @@ const screenHeight = Dimensions.get('window').height;
 
 export default CategoriesList = ({ navigation, route }) => {
     const page_type = route.params.type
+    const user = route.params.user
 
     const [page, setPage] = useState(page_type)  // sử dụng thêm useEffect ràng buộc là "page" để call api mỗi lần chuyển trang
 
@@ -70,8 +71,8 @@ export default CategoriesList = ({ navigation, route }) => {
         scrollViewRef.current.scrollTo({ x: screenWidth * index, animated: true });
     };
 
-    const goToBookingRestaurantScreen = (id) => {
-        navigation.navigate('BookingRestaurant', {id: id})
+    const goToBookingRestaurantScreen = (id, price_table) => {
+        navigation.navigate('BookingRestaurant', {id: id, user: user, price_table: price_table})
     }
 
     useEffect(() => {
@@ -138,7 +139,7 @@ export default CategoriesList = ({ navigation, route }) => {
                             <TouchableOpacity
                                 key={index}
                                 style={[styles.category_container, { backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE' }]}
-                                onPress={() => goToBookingRestaurantScreen(item._id)}
+                                onPress={() => goToBookingRestaurantScreen(item._id, item.price_table)}
                             >
                                 <Image
                                     source={{ uri: item.img }}

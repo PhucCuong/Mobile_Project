@@ -94,7 +94,7 @@ export default DashboardScreen = ({ navigation, route }) => {
     }
 
     const gotoCategoriesListScreen = (endpoint) => {
-        navigation.navigate('CategoriesList', { type: endpoint })
+        navigation.navigate('CategoriesList', { type: endpoint , user: user})
     }
 
     return (

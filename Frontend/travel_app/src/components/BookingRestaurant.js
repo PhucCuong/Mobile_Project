@@ -10,7 +10,33 @@ const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 export default BookingRestaurant = ({ navigation, route }) => {
-    // const id = route.params.id
+    const id = route.params.id
+    const user = route.params.user
+    const price_table = route.params.price_table
+    
+    // hàm cắt lấy giá 
+    function extractAmount(input) {
+        const parts = input.split('/');
+        return parts[0].trim();
+    }
+    
+    const price = extractAmount(price_table)
+
+    const [availableTables, setAvailableTables] = useState([])
+
+    // lấy thông tin người dùng booking
+    const [fullName, setFullName] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('')
+
+    // hàm call api
+    const callApi = async () => {
+        const response = await axios.get(`${ip}/booking/restaurant/${id}`)
+        setAvailableTables(response.data)
+    }
+
+    useEffect(() => {
+        callApi()
+    }, [])
 
     // xử lí thanh phần trăm
     const widthMotion = useRef(new Animated.Value(90)).current
@@ -36,13 +62,16 @@ export default BookingRestaurant = ({ navigation, route }) => {
 
     const handleClickPrevPage = () => {
         const widthNumber = widthMotion.__getValue();
-        if(widthNumber === 270) {
+        if (widthNumber === 270) {
             handleTopRow(180)
             scrollViewRef.current.scrollTo({ x: screenWidth * 1, animated: true });
-        } else if(widthNumber === 180) {
+        } else if (widthNumber === 180) {
             handleTopRow(90)
             scrollViewRef.current.scrollTo({ x: screenWidth * 0, animated: true });
+        } else if (widthNumber === 90) {
+            navigation.goBack()
         }
+
     }
 
     const handleScrollX = (e) => {
@@ -53,32 +82,11 @@ export default BookingRestaurant = ({ navigation, route }) => {
         else if (index === 2) handleTopRow(270)
     }
 
-    // xử lí nút back
-
-    const tables = [
-        {
-            table_name: 'Table 1'
-        },
-        {
-            table_name: 'Table 2'
-        },
-        {
-            table_name: 'Table 3'
-        },
-        {
-            table_name: 'Table 4'
-        },
-        {
-            table_name: 'Table 5'
-        },
-        {
-            table_name: 'Table 6'
-        },
-    ]
-
     const [indexTable, setIndexTable] = useState(null)
-    const handleClickTable = (index) => {
+    const [tableSelectedId, setTableSelectedId] = useState(null)        // bàn đã chọn để đặt
+    const handleClickTable = (index, table_id) => {
         setIndexTable(index)
+        setTableSelectedId(table_id)
     }
 
     // xử lí chọn ngày
@@ -113,7 +121,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
         setTimePickerVisibility(false);
     };
 
-    const handleConfirm = (selectedTime) => {
+    const handleConfirmTime = (selectedTime) => {
         setTime(selectedTime);
         setTimeText(selectedTime.toLocaleTimeString());
         hideTimePicker();
@@ -147,21 +155,24 @@ export default BookingRestaurant = ({ navigation, route }) => {
                     style={styles.choose_table_container}
                 >
                     <Text style={styles.restaurant_name}>Restaurant name</Text>
-                    <View
-                        style={styles.table_row}
-                    >
-                        {
-                            tables.map((item, index) => (
-                                <TouchableOpacity
-                                    style={[styles.one_table, { backgroundColor: indexTable === index ? '#96D8D0' : '#EBEFF3' }]}
-                                    onPress={() => handleClickTable(index)}
-                                >
-                                    <FontAwesome name="cutlery" size={24} color="#252935" />
-                                    <Text>{item.table_name}</Text>
-                                </TouchableOpacity>
-                            ))
-                        }
-                    </View>
+                    <ScrollView>
+                        <View
+                            style={styles.table_row}
+                        >
+                            {
+                                availableTables.map((item, index) => (
+                                    <TouchableOpacity
+                                        style={[styles.one_table, { backgroundColor: indexTable === index ? '#96D8D0' : '#EBEFF3' }]}
+                                        onPress={() => handleClickTable(index, item._id)}
+                                        key={index}
+                                    >
+                                        <FontAwesome name="cutlery" size={24} color="#252935" />
+                                        <Text>{item.tableName}</Text>
+                                    </TouchableOpacity>
+                                ))
+                            }
+                        </View>
+                    </ScrollView>
                     <TouchableOpacity
                         style={styles.button}
                         onPress={() => handleClickNextPage(180)}
@@ -183,14 +194,24 @@ export default BookingRestaurant = ({ navigation, route }) => {
                     >
                         Full Name
                     </Text>
-                    <TextInput style={styles.input} placeholder='Your full name' placeholderTextColor='#E1E3E7' />
+                    <TextInput
+                        style={styles.input}
+                        placeholder='Your full name'
+                        placeholderTextColor='#E1E3E7'
+                        onChangeText={(value) => setFullName(value)}
+                    />
 
                     <Text
                         style={styles.label}
                     >
                         Phone Number
                     </Text>
-                    <TextInput style={styles.input} placeholder='Enter your phone number' placeholderTextColor='#E1E3E7' />
+                    <TextInput
+                        style={styles.input}
+                        placeholder='Enter your phone number'
+                        placeholderTextColor='#E1E3E7'
+                        onChangeText={(value) => setPhoneNumber(value)}
+                    />
 
                     <View>
                         <View style={styles.row}>
@@ -225,7 +246,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
                             <DateTimePickerModal
                                 isVisible={isTimePickerVisible}
                                 mode="time" // Chế độ chọn giờ
-                                onConfirm={handleConfirm}
+                                onConfirm={handleConfirmTime}
                                 onCancel={hideTimePicker}
                                 placeholderTextColor='#E1E3E7'
                             />
@@ -251,42 +272,42 @@ export default BookingRestaurant = ({ navigation, route }) => {
 
                     <View style={styles.order_row}>
                         <Text style={styles.order_label}>Name</Text>
-                        <TextInput value='Phúc Cường' style={styles.order_value} />
+                        <TextInput value={fullName} style={styles.order_value} />
                     </View>
 
                     <View style={styles.order_line}></View>
 
                     <View style={styles.order_row}>
                         <Text style={styles.order_label}>User Name</Text>
-                        <TextInput value='PhucCuong' style={styles.order_value} />
+                        <TextInput value={user.user_name} style={styles.order_value} />
                     </View>
 
                     <View style={styles.order_line}></View>
 
                     <View style={styles.order_row}>
                         <Text style={styles.order_label}>Phone Number</Text>
-                        <TextInput value='012345678' style={styles.order_value} />
+                        <TextInput value={phoneNumber} style={styles.order_value} />
                     </View>
 
                     <View style={styles.order_line}></View>
 
                     <View style={styles.order_row}>
                         <Text style={styles.order_label}>Date</Text>
-                        <TextInput value='01/01/2024' style={styles.order_value} />
+                        <TextInput value={dateText} style={styles.order_value} />
                     </View>
 
                     <View style={styles.order_line}></View>
 
                     <View style={styles.order_row}>
                         <Text style={styles.order_label}>Hour</Text>
-                        <TextInput value='13:00' style={styles.order_value} />
+                        <TextInput value={timeText} style={styles.order_value} />
                     </View>
 
                     <View style={styles.order_final_line}></View>
 
                     <View style={styles.order_row}>
                         <Text style={styles.total_text}>Grand Total</Text>
-                        <TextInput value='80$' style={styles.total_text} />
+                        <TextInput value={price} style={styles.total_text} />
                     </View>
 
                     <TouchableOpacity
@@ -343,11 +364,11 @@ const styles = StyleSheet.create({
         marginLeft: 16
     },
     table_row: {
-        width: screenWidth,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
         maxWidth: screenWidth,
-        paddingLeft: 15
+        flexWrap: 'wrap',
+        paddingLeft: 15,
+        flexDirection: 'row',
+        paddingBottom: 20
     },
     one_table: {
         width: 100,
@@ -356,10 +377,8 @@ const styles = StyleSheet.create({
         marginTop: 15,
         marginHorizontal: 10,
         justifyContent: 'space-around',
-        alignItems: 'center'
+        alignItems: 'center',
     },
-
-
     infomation_container: {
         width: screenWidth,
         backgroundColor: 'white'
@@ -375,7 +394,7 @@ const styles = StyleSheet.create({
         borderRadius: 32,
         alignSelf: 'center',
         position: 'absolute',
-        top: 520,
+        top: 540,
         justifyContent: 'center',
         alignItems: 'center'
     },
