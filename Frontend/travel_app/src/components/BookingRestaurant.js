@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, SafeAreaView, Modal, Animated } from 'react-native';
+import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, SafeAreaView, Modal, Animated, Alert } from 'react-native';
 import { useState, useEffect, useRef } from 'react'
 import { FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
@@ -10,7 +10,7 @@ const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 export default BookingRestaurant = ({ navigation, route }) => {
-    const id = route.params.id
+    const restaurant_id = route.params.id
     const user = route.params.user
     const price_table = route.params.price_table
     
@@ -30,7 +30,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
 
     // hàm call api
     const callApi = async () => {
-        const response = await axios.get(`${ip}/booking/restaurant/${id}`)
+        const response = await axios.get(`${ip}/booking/restaurant/${restaurant_id}`)
         setAvailableTables(response.data)
     }
 
@@ -51,6 +51,10 @@ export default BookingRestaurant = ({ navigation, route }) => {
 
     const scrollViewRef = useRef(null)
     const handleClickNextPage = (width) => {
+        if (tableSelectedId === null) {
+            Alert.alert('please select a table')
+            return
+        }
         handleTopRow(width)
         if (width === 180) {
             scrollViewRef.current.scrollTo({ x: screenWidth * 1, animated: true });
@@ -126,6 +130,46 @@ export default BookingRestaurant = ({ navigation, route }) => {
         setTimeText(selectedTime.toLocaleTimeString());
         hideTimePicker();
     };
+
+    // hàm booking gọi đẩy data lên sever
+    const booking = async () => {
+        // console.log(fullName)
+        // console.log(user.user_name)
+        // console.log(phoneNumber)
+        // console.log(dateText)
+        // console.log(timeText)
+        // console.log(price)
+        // console.log(tableSelectedId)
+        try {
+            const response = await axios.put(`${ip}/restaurant/booking/${restaurant_id}/${tableSelectedId}`, {
+                fullName,
+                user_name: user.user_name,
+                phoneNumber,
+                dateText,
+                timeText,
+                price
+            });
+    
+            if (response.status === 200) {
+                Alert.alert('Booked successfully');
+            }
+        } catch (error) {
+            // Kiểm tra xem lỗi có từ server không
+            if (error.response) {
+                // Server đã phản hồi với mã trạng thái khác 2xx
+                console.error('Error response data:', error.response.data);
+                Alert.alert('Booked failure', error.response.data.message || 'Unknown error');
+            } else if (error.request) {
+                // Yêu cầu đã được gửi nhưng không nhận được phản hồi
+                console.error('Error request:', error.request);
+                Alert.alert('Booked failure', 'No response from server');
+            } else {
+                // Lỗi khác
+                console.error('Error message:', error.message);
+                Alert.alert('Booked failure', error.message);
+            }
+        }
+    }
 
     return (
         <SafeAreaView
@@ -240,6 +284,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
                             <TextInput
                                 value={timeText}
                                 placeholder="Chọn giờ"
+                                placeholderTextColor='#E1E3E7'
                                 onFocus={showTimePicker} // Mở TimePicker khi focus vào TextInput
                                 style={styles.small_input}
                             />
@@ -312,6 +357,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
 
                     <TouchableOpacity
                         style={styles.button}
+                        onPress={() => booking()}
                     >
                         <Text
                             style={styles.button_text}
