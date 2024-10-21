@@ -15,12 +15,14 @@ export default BookingRestaurant = ({ navigation, route }) => {
     const price_table = route.params.price_table
     
     // hàm cắt lấy giá 
-    function extractAmount(input) {
-        const parts = input.split('/');
-        return parts[0].trim();
+    function extractNumber(str) {
+        // Loại bỏ " VND/Table" và các dấu chấm
+        const numberString = str.replace(" VND/Table", "").replace(/\./g, "");
+        // Chuyển đổi chuỗi thành số
+        return parseInt(numberString, 10);
     }
     
-    const price = extractAmount(price_table)
+    const price = extractNumber(price_table)
 
     const [availableTables, setAvailableTables] = useState([])
 
@@ -49,19 +51,29 @@ export default BookingRestaurant = ({ navigation, route }) => {
         }).start()
     }
 
+    const [stringPrice, setStringPrice] = useState(null)
     const scrollViewRef = useRef(null)
     const handleClickNextPage = (width) => {
-        if (tableSelectedId === null) {
+        if (tableArray.length === 0) {
             Alert.alert('please select a table')
             return
         }
         handleTopRow(width)
         if (width === 180) {
+            setStringPrice(numberToVND(price * tableArray.length))
             scrollViewRef.current.scrollTo({ x: screenWidth * 1, animated: true });
         }
         else if (width === 270) {
             scrollViewRef.current.scrollTo({ x: screenWidth * 2, animated: true });
         }
+    }
+    
+    // hàm đổi tiền số thành VND
+    function numberToVND(num) {
+        // Chuyển đổi số thành chuỗi với dấu phân cách hàng nghìn
+        const formattedNumber = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        // Thêm " VND" vào cuối
+        return `${formattedNumber} VND`;
     }
 
     const handleClickPrevPage = () => {
@@ -86,11 +98,23 @@ export default BookingRestaurant = ({ navigation, route }) => {
         else if (index === 2) handleTopRow(270)
     }
 
-    const [indexTable, setIndexTable] = useState(null)
-    const [tableSelectedId, setTableSelectedId] = useState(null)        // bàn đã chọn để đặt
-    const handleClickTable = (index, table_id) => {
-        setIndexTable(index)
-        setTableSelectedId(table_id)
+    // mảng select table
+    const [tableArray, setTableArray] = useState([])
+    
+    const handleClickTable = (table_id) => {
+        
+        isInclude = tableArray.includes(table_id)
+        if(!isInclude) {
+            setTableArray(prevArray => [...prevArray, table_id]);
+        } else {
+            //code xoá phần tử table_id trong mảng tableArray
+            setTableArray(prevArray => prevArray.filter(id => id !== table_id));
+        }
+    }
+
+    // hàm kiểm tra trong mảng tableArray có id của table hay không
+    const arrayIncludeTableId = (table_id) => {
+        return tableArray.includes(table_id)
     }
 
     // xử lí chọn ngày
@@ -133,25 +157,21 @@ export default BookingRestaurant = ({ navigation, route }) => {
 
     // hàm booking gọi đẩy data lên sever
     const booking = async () => {
-        // console.log(fullName)
-        // console.log(user.user_name)
-        // console.log(phoneNumber)
-        // console.log(dateText)
-        // console.log(timeText)
-        // console.log(price)
-        // console.log(tableSelectedId)
         try {
-            const response = await axios.put(`${ip}/restaurant/booking/${restaurant_id}/${tableSelectedId}`, {
+            const response = await axios.put(`${ip}/restaurant/booking/${restaurant_id}`, {
                 fullName,
                 user_name: user.user_name,
                 phoneNumber,
                 dateText,
                 timeText,
-                price
+                tableArray
             });
     
             if (response.status === 200) {
                 Alert.alert('Booked successfully');
+                navigation.navigate('CategoriesList', { type: 'restaurants' , user: user})
+            } else {
+                Alert.alert('Booked failed');
             }
         } catch (error) {
             // Kiểm tra xem lỗi có từ server không
@@ -206,12 +226,13 @@ export default BookingRestaurant = ({ navigation, route }) => {
                             {
                                 availableTables.map((item, index) => (
                                     <TouchableOpacity
-                                        style={[styles.one_table, { backgroundColor: indexTable === index ? '#96D8D0' : '#EBEFF3' }]}
-                                        onPress={() => handleClickTable(index, item._id)}
+                                        style={[styles.one_table, {backgroundColor: arrayIncludeTableId(item._id) ? '#96D8D0' : '#EBEFF3'}]}
+                                        onPress={() => handleClickTable(item._id)}
                                         key={index}
                                     >
                                         <FontAwesome name="cutlery" size={24} color="#252935" />
                                         <Text>{item.tableName}</Text>
+                                        <FontAwesome name="check-circle" size={24} color="#111111" style={[styles.check_icon, {display: arrayIncludeTableId(item._id) ? 'flex' : 'none'}]}/>
                                     </TouchableOpacity>
                                 ))
                             }
@@ -352,7 +373,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
 
                     <View style={styles.order_row}>
                         <Text style={styles.total_text}>Grand Total</Text>
-                        <TextInput value={price} style={styles.total_text} />
+                        <TextInput value={stringPrice} style={styles.total_text} />
                     </View>
 
                     <TouchableOpacity
@@ -523,5 +544,10 @@ const styles = StyleSheet.create({
         color: '#666D80',
         fontSize: 16,
         fontWeight: 'bold'
+    },
+    check_icon: {
+        position: 'absolute',
+        top: 0,
+        right: 0
     }
 })
