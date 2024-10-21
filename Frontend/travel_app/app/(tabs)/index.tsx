@@ -14,6 +14,7 @@ import CategoriesList from '../../src/components/CategoriesList.js'
 import UserInfoScreen from '../../src/components/UserInfoScreen.js'
 import BookingRestaurant from '../../src/components/BookingRestaurant.js'
 import BookingHotel from '../../src/components/BookingHotel.js'
+import BookingCoffee from '../../src/components/BookingCoffee.js'
 
 
 ///   link font
@@ -94,6 +95,11 @@ export default function HomeScreen() {
       <Stack.Screen
         name="BookingHotel"
         component={BookingHotel}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="BookingCoffee"
+        component={BookingCoffee}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

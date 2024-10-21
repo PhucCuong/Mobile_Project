@@ -79,6 +79,10 @@ export default CategoriesList = ({ navigation, route }) => {
         navigation.navigate('BookingHotel', {id: id, user: user, hotel_name: name})
     }
 
+    const gotoBookingCoffeeScreen = (id, name, price_table) => {
+        navigation.navigate('BookingCoffee', {id: id, user: user, price_table: price_table, coffee_name: name})
+    }
+
     useEffect(() => {
         callApi()
     }, [])
@@ -259,6 +263,7 @@ export default CategoriesList = ({ navigation, route }) => {
                             <TouchableOpacity
                                 key={index}
                                 style={[styles.category_container, { backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE' }]}
+                                onPress={() => gotoBookingCoffeeScreen(item._id, item.category_name,item.price_table)}
                             >
                                 <Image
                                     source={{ uri: item.img }}
