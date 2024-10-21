@@ -71,8 +71,12 @@ export default CategoriesList = ({ navigation, route }) => {
         scrollViewRef.current.scrollTo({ x: screenWidth * index, animated: true });
     };
 
-    const goToBookingRestaurantScreen = (id, price_table) => {
-        navigation.navigate('BookingRestaurant', {id: id, user: user, price_table: price_table})
+    const goToBookingRestaurantScreen = (id, name, price_table) => {
+        navigation.navigate('BookingRestaurant', {id: id, user: user, price_table: price_table, restaurant_name: name})
+    }
+
+    const goToBookingHotelScreen = (id, name) => {
+        navigation.navigate('BookingHotel', {id: id, user: user, hotel_name: name})
     }
 
     useEffect(() => {
@@ -139,7 +143,7 @@ export default CategoriesList = ({ navigation, route }) => {
                             <TouchableOpacity
                                 key={index}
                                 style={[styles.category_container, { backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE' }]}
-                                onPress={() => goToBookingRestaurantScreen(item._id, item.price_table)}
+                                onPress={() => goToBookingRestaurantScreen(item._id, item.category_name,item.price_table)}
                             >
                                 <Image
                                     source={{ uri: item.img }}
@@ -178,6 +182,7 @@ export default CategoriesList = ({ navigation, route }) => {
                             <TouchableOpacity
                                 key={index}
                                 style={[styles.category_container, { backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE' }]}
+                                onPress={() => goToBookingHotelScreen(item._id, item.category_name)}
                             >
                                 <Image
                                     source={{ uri: item.img }}

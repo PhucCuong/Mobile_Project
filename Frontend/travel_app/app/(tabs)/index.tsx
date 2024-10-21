@@ -13,6 +13,7 @@ import DetailScreen from '../../src/components/DetailScreen.js'
 import CategoriesList from '../../src/components/CategoriesList.js'
 import UserInfoScreen from '../../src/components/UserInfoScreen.js'
 import BookingRestaurant from '../../src/components/BookingRestaurant.js'
+import BookingHotel from '../../src/components/BookingHotel.js'
 
 
 ///   link font
@@ -88,6 +89,11 @@ export default function HomeScreen() {
       <Stack.Screen
         name="BookingRestaurant"
         component={BookingRestaurant}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="BookingHotel"
+        component={BookingHotel}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

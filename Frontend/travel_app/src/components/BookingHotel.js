@@ -9,11 +9,10 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-export default BookingRestaurant = ({ navigation, route }) => {
-    const restaurant_id = route.params.id
+export default BookingHotel = ({ navigation, route }) => {
+    const hotel_id = route.params.id
     const user = route.params.user
-    const price_table = route.params.price_table
-    const restaurant_name = route.params.restaurant_name
+    const hotel_name = route.params.hotel_name
     
     // hàm cắt lấy giá 
     function extractNumber(str) {
@@ -23,9 +22,9 @@ export default BookingRestaurant = ({ navigation, route }) => {
         return parseInt(numberString, 10);
     }
     
-    const price = extractNumber(price_table)
+    // const price = extractNumber(price_table)
 
-    const [availableTables, setAvailableTables] = useState([])
+    const [availableRooms, setAvailableRooms] = useState([])
 
     // lấy thông tin người dùng booking
     const [fullName, setFullName] = useState('')
@@ -33,8 +32,8 @@ export default BookingRestaurant = ({ navigation, route }) => {
 
     // hàm call api
     const callApi = async () => {
-        const response = await axios.get(`${ip}/booking/restaurant/${restaurant_id}`)
-        setAvailableTables(response.data)
+        const response = await axios.get(`${ip}/booking/hotel/${hotel_id}`)
+        setAvailableRooms(response.data)
     }
 
     useEffect(() => {
@@ -52,21 +51,31 @@ export default BookingRestaurant = ({ navigation, route }) => {
         }).start()
     }
 
-    const [stringPrice, setStringPrice] = useState(null)
+    const [stringPrice, setStringPrice] = useState(null)  //
     const scrollViewRef = useRef(null)
     const handleClickNextPage = (width) => {
-        if (tableArray.length === 0) {
-            Alert.alert('please select a table')
+        if (roomArray.length === 0) {
+            Alert.alert('please select a room')
             return
         }
         handleTopRow(width)
         if (width === 180) {
-            setStringPrice(numberToVND(price * tableArray.length))
             scrollViewRef.current.scrollTo({ x: screenWidth * 1, animated: true });
         }
         else if (width === 270) {
             scrollViewRef.current.scrollTo({ x: screenWidth * 2, animated: true });
+            totalPriceRooms()
         }
+    }
+
+    // hàm tính tổng tiền phòng
+    const [totalPrice, setTotalPrice] = useState('')
+    const totalPriceRooms = () => {
+        temp = 0
+        priceRoomArray.map((item) => {
+            temp += extractNumber(item)
+        })
+        setTotalPrice(numberToVND(temp))
     }
     
     // hàm đổi tiền số thành VND
@@ -94,28 +103,37 @@ export default BookingRestaurant = ({ navigation, route }) => {
     const handleScrollX = (e) => {
         const contentOffsetX = e.nativeEvent.contentOffset.x
         const index = Math.floor(contentOffsetX / screenWidth);
-        if (index === 0) handleTopRow(90)
+        if (index === 0) {
+            if (roomArray.length === 0) {
+                Alert.alert('please select a room')
+                return
+            }
+            handleTopRow(90)
+        }
         else if (index === 1) handleTopRow(180)
         else if (index === 2) handleTopRow(270)
     }
 
     // mảng select table
-    const [tableArray, setTableArray] = useState([])
+    const [roomArray, setRoomArray] = useState([])
+    const [priceRoomArray, setPriceRoomArray] = useState([])
     
-    const handleClickTable = (table_id) => {
+    const handleClickRoom = (room_id, room_price) => {
         
-        isInclude = tableArray.includes(table_id)
+        isInclude = roomArray.includes(room_id)
         if(!isInclude) {
-            setTableArray(prevArray => [...prevArray, table_id]);
+            setRoomArray(prevArray => [...prevArray, room_id]);
+            setPriceRoomArray(prevArray => [...prevArray, room_price]);
         } else {
-            //code xoá phần tử table_id trong mảng tableArray
-            setTableArray(prevArray => prevArray.filter(id => id !== table_id));
+            //code xoá phần tử table_id trong mảng roomArray
+            setRoomArray(prevArray => prevArray.filter(id => id !== room_id));
+            setPriceRoomArray(prevArray => prevArray.filter(id => id !== room_price));
         }
     }
 
-    // hàm kiểm tra trong mảng tableArray có id của table hay không
-    const arrayIncludeTableId = (table_id) => {
-        return tableArray.includes(table_id)
+    // hàm kiểm tra trong mảng roomArray có id của table hay không
+    const arrayIncludeRoomId = (room_id) => {
+        return roomArray.includes(room_id)
     }
 
     // xử lí chọn ngày
@@ -159,18 +177,18 @@ export default BookingRestaurant = ({ navigation, route }) => {
     // hàm booking gọi đẩy data lên sever
     const booking = async () => {
         try {
-            const response = await axios.put(`${ip}/restaurant/booking/${restaurant_id}`, {
+            const response = await axios.put(`${ip}/hotel/booking/${hotel_id}`, {
                 fullName,
                 user_name: user.user_name,
                 phoneNumber,
                 dateText,
                 timeText,
-                tableArray
+                roomArray
             });
     
             if (response.status === 200) {
                 Alert.alert('Booked successfully');
-                navigation.navigate('CategoriesList', { type: 'restaurants' , user: user})
+                navigation.navigate('CategoriesList', { type: 'hotels' , user: user})
             } else {
                 Alert.alert('Booked failed');
             }
@@ -219,21 +237,21 @@ export default BookingRestaurant = ({ navigation, route }) => {
                 <View
                     style={styles.choose_table_container}
                 >
-                    <Text style={styles.restaurant_name}>{restaurant_name}</Text>
+                    <Text style={styles.restaurant_name}>{hotel_name}</Text>
                     <ScrollView>
                         <View
                             style={styles.table_row}
                         >
                             {
-                                availableTables.map((item, index) => (
+                                availableRooms.map((item, index) => (
                                     <TouchableOpacity
-                                        style={[styles.one_table, {backgroundColor: arrayIncludeTableId(item._id) ? '#96D8D0' : '#EBEFF3'}]}
-                                        onPress={() => handleClickTable(item._id)}
+                                        style={[styles.one_table, {backgroundColor: arrayIncludeRoomId(item._id) ? '#96D8D0' : '#EBEFF3'}]}
+                                        onPress={() => handleClickRoom(item._id, item.price)}
                                         key={index}
                                     >
-                                        <FontAwesome name="cutlery" size={24} color="#252935" />
-                                        <Text>{item.tableName}</Text>
-                                        <FontAwesome name="check-circle" size={24} color="#111111" style={[styles.check_icon, {display: arrayIncludeTableId(item._id) ? 'flex' : 'none'}]}/>
+                                        <FontAwesome name="hotel" size={24} color="#252935" />
+                                        <Text>{item.name_room}</Text>
+                                        <FontAwesome name="check-circle" size={24} color="#111111" style={[styles.check_icon, {display: arrayIncludeRoomId(item._id) ? 'flex' : 'none'}]}/>
                                     </TouchableOpacity>
                                 ))
                             }
@@ -241,11 +259,13 @@ export default BookingRestaurant = ({ navigation, route }) => {
                     </ScrollView>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => handleClickNextPage(180)}
+                        onPress={() => {
+                            handleClickNextPage(180)
+                        }}
                     >
                         <Text
                             style={styles.button_text}
-                        >Reserved a Table</Text>
+                        >Reserved a Room</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -374,7 +394,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
 
                     <View style={styles.order_row}>
                         <Text style={styles.total_text}>Grand Total</Text>
-                        <TextInput value={stringPrice} style={styles.total_text} />
+                        <TextInput value={totalPrice} style={styles.total_text} />
                     </View>
 
                     <TouchableOpacity
