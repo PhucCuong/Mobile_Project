@@ -1,5 +1,5 @@
-import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions } from 'react-native';
-import { useState, useEffect } from 'react'
+import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, Alert } from 'react-native';
+import { useState, useEffect, useRef } from 'react'
 import { FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
 import ip from '../../assets/ip/Ip.js'
@@ -7,9 +7,12 @@ import { useIsFocused } from '@react-navigation/native';
 
 
 const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height
 
 export default DashboardScreen = ({ navigation, route }) => {
     const id = route.params.id
+
+    const scrollScreen = useRef(null)
 
     const isFocused = useIsFocused();
 
@@ -59,8 +62,22 @@ export default DashboardScreen = ({ navigation, route }) => {
     const [acctivedPage, setAcctivedPage] = useState('home')
     const page_acction = (page_name) => {
         setAcctivedPage(page_name)
+        scrollToPage(page_name)
     }
-    
+
+    // hàm scrollScreen
+    const scrollToPage = (page_name) => {
+        if(page_name === 'home') {
+            scrollScreen.current.scrollTo({ x: screenWidth * 0, animated: false });
+        } else if (page_name === 'booked') {
+            scrollScreen.current.scrollTo({ x: screenWidth * 1, animated: false });
+        } else if (page_name === 'liked') {
+            scrollScreen.current.scrollTo({ x: screenWidth * 2, animated: false });
+        } else if (page_name === 'setting') {
+            scrollScreen.current.scrollTo({ x: screenWidth * 3, animated: false });
+        }
+    }
+
 
     const toggle_like = async (id) => {
         try {
@@ -90,176 +107,233 @@ export default DashboardScreen = ({ navigation, route }) => {
     };
 
     const goToDetailScreen = (id) => {
-        navigation.navigate('DetailScreen', { id: id , user_info: user})
+        navigation.navigate('DetailScreen', { id: id, user_info: user })
     }
 
     const gotoCategoriesListScreen = (endpoint) => {
-        navigation.navigate('CategoriesList', { type: endpoint , user: user})
+        navigation.navigate('CategoriesList', { type: endpoint, user: user })
+    }
+
+    const logout = () => {
+        Alert.alert(
+            "Thông báo",  // Tiêu đề
+            "Are You Sure?",  // Nội dung
+            [
+              {
+                text: "Cancel",  // Nút Cancel
+                style: "cancel"  // Kiểu của nút Cancel
+              },
+              { 
+                text: "OK",  // Nút OK
+                onPress: () => navigation.goBack()
+              }
+            ],
+            { cancelable: true }  // Cho phép đóng Alert khi chạm ngoài
+          );
     }
 
     return (
-        <View style={styles.container}>
-            {/* info */}
-            <View style={styles.info_conteiner}>
-                <Text style={styles.name}>Hi, {user.user_name}</Text>
-                <View>
-                    <View style={styles.location_row}>
-                        <FontAwesome name="map-marker" size={17} color="#B0B0B0" />
-                        <Text style={styles.location}>Bien Hoa city, Viet Nam</Text>
+        <View>
+            <ScrollView
+                horizontal
+                style={styles.big_container}
+                pagingEnabled
+                ref={scrollScreen}
+                scrollEnabled={false}
+            >
+                {/* HOME SCREEN */}
+                <View style={styles.container}>
+                    {/* info */}
+                    <View style={styles.info_conteiner}>
+                        <Text style={styles.name}>Hi, {user.user_name}</Text>
+                        <View>
+                            <View style={styles.location_row}>
+                                <FontAwesome name="map-marker" size={17} color="#B0B0B0" />
+                                <Text style={styles.location}>Bien Hoa city, Viet Nam</Text>
+                            </View>
+                        </View>
+                        <View style={styles.notification_a_avatar}>
+                            <TouchableOpacity style={styles.bell}>
+                                <FontAwesome name="bell" size={24} color="black" />
+                                <View style={styles.online}></View>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    const endpoint = user._id
+                                    navigation.navigate('UserInfoScreen', { _id: endpoint })
+                                }}
+                            >
+                                <Image source={{ uri: user.avatar }} style={styles.avatar} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    {/* input */}
+                    <View style={styles.input_container}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder='Search for place...'
+                            placeholderTextColor="#B0B0B0"
+                            onChangeText={(value) => setSearchValue(value)}
+                        />
+                        <FontAwesome
+                            name="search" size={24} color="#B0B0B0"
+                            style={styles.search_icon}
+                        />
+                    </View>
+
+                    {/* Categories */}
+                    <View style={styles.categories_container}>
+                        <View style={styles.title_row}>
+                            <Text style={styles.tiltle_text}>Categories</Text>
+                        </View>
+                        <View style={styles.categories_row}>
+                            <TouchableOpacity
+                                style={styles.categories_button}
+                                onPress={() => gotoCategoriesListScreen('restaurants')}
+                            >
+                                <View style={styles.icon_container}>
+                                    <FontAwesome name="cutlery" size={24} color="white" />
+                                </View>
+                                <Text style={styles.categories_text}>Restaurants</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={styles.categories_button}
+                                onPress={() => gotoCategoriesListScreen('hotels')}
+                            >
+                                <View style={styles.icon_container}>
+                                    <FontAwesome name="building" size={24} color="white" />
+                                </View>
+                                <Text style={styles.categories_text}>Hotels</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={styles.categories_button}
+                                onPress={() => gotoCategoriesListScreen('beaches')}
+                            >
+                                <View style={styles.icon_container}>
+                                    <FontAwesome name="bath" size={24} color="white" />
+                                </View>
+                                <Text style={styles.categories_text}>Beaches</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={styles.categories_button}
+                                onPress={() => gotoCategoriesListScreen('coffees')}
+                            >
+                                <View style={styles.icon_container}>
+                                    <FontAwesome name="coffee" size={24} color="white" />
+                                </View>
+                                <Text style={styles.categories_text}>Coffees</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    {/*  */}
+                    <View style={styles.location_title_row}>
+                        <Text style={styles.location_title}>Locations</Text>
+                        <TouchableOpacity>
+                            <Text style={styles.viewall_text}>View all</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {/*  */}
+                    <View style={styles.scrooll_row}>
+                        <ScrollView
+                            horizontal
+                            contentContainerStyle={{ width: tourlist.length * (156 + 16), height: 233 }}
+                            showsHorizontalScrollIndicator={false}
+                        >
+                            {
+                                renderTourist.map((item, index) => (
+                                    <TouchableOpacity
+                                        style={styles.location_item}
+                                        key={index}
+                                        onPress={() => goToDetailScreen(item._id)}
+                                    >
+                                        <Image
+                                            style={styles.location_image}
+                                            source={{ uri: item.img }}
+                                        />
+                                        <View style={styles.hot_container}>
+                                            <Text style={styles.hot_text}>HOT</Text>
+                                        </View>
+                                        <TouchableOpacity
+                                            style={styles.tym_container}
+                                            onPress={() => toggle_like(item._id)}
+                                        >
+                                            <FontAwesome name="heart" size={18} color={
+                                                checkUserInLikeList(index) === true ? 'blue' : 'white'
+                                            } />
+                                        </TouchableOpacity>
+                                        <Text style={styles.tourist_name}>{item.tourist_name}</Text>
+
+                                        <View style={styles.users_row}>
+                                            {
+                                                item.like_user.map((user, i) => (
+                                                    <Image
+                                                        style={styles.small_avatar}
+                                                        source={{ uri: user.avatar }}
+                                                        key={i}
+                                                    />
+                                                ))
+                                            }
+                                        </View>
+
+                                        <Text
+                                            style={styles.distance}
+                                            numberOfLines={1}
+                                        >
+                                            {item.distance}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))
+                            }
+                        </ScrollView>
                     </View>
                 </View>
-                <View style={styles.notification_a_avatar}>
-                    <TouchableOpacity style={styles.bell}>
-                        <FontAwesome name="bell" size={24} color="black" />
-                        <View style={styles.online}></View>
-                    </TouchableOpacity>
+
+                {/* Booked Screen */}
+                <View style={styles.container}>
+                    <Text style={{ fontSize: 100 }}>booked Screen</Text>
+                </View>
+
+                {/* Liked Screen */}
+                <View style={styles.container}>
+                    <Text style={{ fontSize: 100 }}>Liked Screen</Text>
+                </View>
+
+                {/* Setting Screen */}
+                <View style={styles.container}>
+                    <Image style={styles.avatar_setting} source={{uri : user.avatar}}/> 
+                    <Text style={styles.name_setting}>{user.user_name}</Text>
                     <TouchableOpacity
-                        onPress={() => {
-                            const endpoint = user._id
-                            navigation.navigate('UserInfoScreen', { _id: endpoint })
-                        }}
+                        style={styles.setting_logout_button}
+                        onPress={logout}
                     >
-                        <Image source={{ uri: user.avatar }} style={styles.avatar} />
+                        <Text style={styles.logout_button_text}>
+                            Log out
+                        </Text>
                     </TouchableOpacity>
                 </View>
-            </View>
-
-            {/* input */}
-            <View style={styles.input_container}>
-                <TextInput
-                    style={styles.input}
-                    placeholder='Search for place...'
-                    placeholderTextColor="#B0B0B0"
-                    onChangeText={(value) => setSearchValue(value)}
-                />
-                <FontAwesome
-                    name="search" size={24} color="#B0B0B0"
-                    style={styles.search_icon}
-                />
-            </View>
-
-            {/* Categories */}
-            <View style={styles.categories_container}>
-                <View style={styles.title_row}>
-                    <Text style={styles.tiltle_text}>Categories</Text>
-                </View>
-                <View style={styles.categories_row}>
-                    <TouchableOpacity
-                        style={styles.categories_button}
-                        onPress={() => gotoCategoriesListScreen('restaurants')}
-                    >
-                        <View style={styles.icon_container}>
-                            <FontAwesome name="cutlery" size={24} color="white" />
-                        </View>
-                        <Text style={styles.categories_text}>Restaurants</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.categories_button}
-                        onPress={() => gotoCategoriesListScreen('hotels')}
-                    >
-                        <View style={styles.icon_container}>
-                            <FontAwesome name="building" size={24} color="white" />
-                        </View>
-                        <Text style={styles.categories_text}>Hotels</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.categories_button}
-                        onPress={() => gotoCategoriesListScreen('beaches')}
-                    >
-                        <View style={styles.icon_container}>
-                            <FontAwesome name="bath" size={24} color="white" />
-                        </View>
-                        <Text style={styles.categories_text}>Beaches</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.categories_button}
-                        onPress={() => gotoCategoriesListScreen('coffees')}
-                    >
-                        <View style={styles.icon_container}>
-                            <FontAwesome name="coffee" size={24} color="white" />
-                        </View>
-                        <Text style={styles.categories_text}>Coffees</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            {/*  */}
-            <View style={styles.location_title_row}>
-                <Text style={styles.location_title}>Locations</Text>
-                <TouchableOpacity>
-                    <Text style={styles.viewall_text}>View all</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/*  */}
-            <View style={styles.scrooll_row}>
-                <ScrollView
-                    horizontal
-                    contentContainerStyle={{ width: tourlist.length * (156 + 16), height: 233 }}
-                    showsHorizontalScrollIndicator={false}
-                >
-                    {
-                        renderTourist.map((item, index) => (
-                            <TouchableOpacity
-                                style={styles.location_item}
-                                key={index}
-                                onPress={() => goToDetailScreen(item._id)}
-                            >
-                                <Image
-                                    style={styles.location_image}
-                                    source={{ uri: item.img }}
-                                />
-                                <View style={styles.hot_container}>
-                                    <Text style={styles.hot_text}>HOT</Text>
-                                </View>
-                                <TouchableOpacity
-                                    style={styles.tym_container}
-                                    onPress={() => toggle_like(item._id)}
-                                >
-                                    <FontAwesome name="heart" size={18} color={
-                                        checkUserInLikeList(index) === true ? 'blue' : 'white'
-                                    } />
-                                </TouchableOpacity>
-                                <Text style={styles.tourist_name}>{item.tourist_name}</Text>
-
-                                <View style={styles.users_row}>
-                                    {
-                                        item.like_user.map((user, i) => (
-                                            <Image
-                                                style={styles.small_avatar}
-                                                source={{ uri: user.avatar }}
-                                                key={i}
-                                            />
-                                        ))
-                                    }
-                                </View>
-
-                                <Text
-                                    style={styles.distance}
-                                    numberOfLines={1}
-                                >
-                                    {item.distance}
-                                </Text>
-                            </TouchableOpacity>
-                        ))
-                    }
-                </ScrollView>
-            </View>
+            </ScrollView>
 
             {/* menu bottom */}
             <View style={styles.menu_bottom_container}>
                 <TouchableOpacity
-                    onPress={() => page_acction('home')}
+                    onPress={() => {
+                        page_acction('home')
+                    }}
                 >
                     <FontAwesome name="home" size={24} color={acctivedPage === 'home' ? 'white' : '#555555'} />
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => page_acction('calendar')}
+                    onPress={() => {
+                        page_acction('booked')
+                    }}
                 >
-                    <FontAwesome name="calendar" size={24} color={acctivedPage === 'calendar' ? 'white' : '#555555'} />
+                    <FontAwesome name="calendar" size={24} color={acctivedPage === 'booked' ? 'white' : '#555555'} />
                 </TouchableOpacity>
                 <TouchableOpacity>
                     <View style={styles.search}>
@@ -267,12 +341,16 @@ export default DashboardScreen = ({ navigation, route }) => {
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => page_acction('like')}
+                    onPress={() => {
+                        page_acction('liked')
+                    }}
                 >
-                    <FontAwesome name="heart" size={24} color={acctivedPage === 'like' ? 'white' : '#555555'} />
+                    <FontAwesome name="heart" size={24} color={acctivedPage === 'liked' ? 'white' : '#555555'} />
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => page_acction('setting')}
+                    onPress={() => {
+                        page_acction('setting')
+                    }}
                 >
                     <FontAwesome name="gear" size={24} color={acctivedPage === 'setting' ? 'white' : '#555555'} />
                 </TouchableOpacity>
@@ -282,9 +360,13 @@ export default DashboardScreen = ({ navigation, route }) => {
 }
 
 const styles = StyleSheet.create({
+    big_container: {
+        height: screenWidth * 4,
+        
+    },
     container: {
         backgroundColor: '#F2F2F7',
-        flex: 1,
+        width: screenWidth,
     },
     info_conteiner: {
         marginTop: 60,
@@ -510,12 +592,12 @@ const styles = StyleSheet.create({
         height: 96,
         borderRadius: 32,
         position: 'absolute',
-        bottom: 1,
+        top: 668,
         backgroundColor: '#111111',
         alignSelf: 'center',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-around'
+        justifyContent: 'space-around',
     },
     search: {
         width: 56,
@@ -524,5 +606,32 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 28
+    },
+    avatar_setting: {
+        width: 150,
+        height: 150,
+        borderRadius: 75,
+        marginTop: 63,
+        alignSelf: 'center'
+    },
+    name_setting: {
+        fontSize: 32,
+        alignSelf: 'center',
+        marginTop: 24,
+        fontFamily: 'OpenSans-Semibold',
+    },
+    setting_logout_button: {
+        width: 313,
+        height: 55,
+        borderRadius: 16,
+        backgroundColor: '#96D8D0',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 300
+    },
+    logout_button_text: {
+        color: 'red',
+        fontSize: 20
     }
 })
