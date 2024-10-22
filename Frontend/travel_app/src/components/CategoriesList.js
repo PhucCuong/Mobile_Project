@@ -227,7 +227,7 @@ export default CategoriesList = ({ navigation, route }) => {
                                 style={[styles.category_container, { backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE' }]}
                             >
                                 <Image
-                                    source={{ uri: item.image }}
+                                    source={{ uri: item.img }}
                                     style={styles.category_image}
                                 />
 

@@ -67,12 +67,14 @@ export default DashboardScreen = ({ navigation, route }) => {
 
     // hàm scrollScreen
     const scrollToPage = (page_name) => {
-        if(page_name === 'home') {
+        if (page_name === 'home') {
             scrollScreen.current.scrollTo({ x: screenWidth * 0, animated: false });
         } else if (page_name === 'booked') {
             scrollScreen.current.scrollTo({ x: screenWidth * 1, animated: false });
+            call_api(page_name)
         } else if (page_name === 'liked') {
             scrollScreen.current.scrollTo({ x: screenWidth * 2, animated: false });
+            call_api(page_name)
         } else if (page_name === 'setting') {
             scrollScreen.current.scrollTo({ x: screenWidth * 3, animated: false });
         }
@@ -119,17 +121,87 @@ export default DashboardScreen = ({ navigation, route }) => {
             "Thông báo",  // Tiêu đề
             "Are You Sure?",  // Nội dung
             [
-              {
-                text: "Cancel",  // Nút Cancel
-                style: "cancel"  // Kiểu của nút Cancel
-              },
-              { 
-                text: "OK",  // Nút OK
-                onPress: () => navigation.goBack()
-              }
+                {
+                    text: "Cancel",  // Nút Cancel
+                    style: "cancel"  // Kiểu của nút Cancel
+                },
+                {
+                    text: "OK",  // Nút OK
+                    onPress: () => navigation.goBack()
+                }
             ],
             { cancelable: true }  // Cho phép đóng Alert khi chạm ngoài
-          );
+        );
+    } 
+
+    const [api, setApi] = useState([
+        {
+            _id: 1,
+            tourist_name: 'Bali',
+            category_name: 'Bali',
+            img: 'https://owa.bestprice.vn/images/tours/uploads/kham-pha-ve-dep-tiem-an-bali-5n4d-khoi-hanh-tu-ha-noi-66b09db7b97cb.jpg',
+            location: 'Indonesia'
+        },
+        {
+            _id: 2,
+            tourist_name: 'BangKok',
+            category_name: 'BangKok',
+            img: 'https://www.chudu24.com/wp-content/uploads/2024/04/indian-dinner-cruise-bangkok-l.jpg',
+            location: 'Thailand'
+        },
+        {
+            _id: 3,
+            tourist_name: 'Nha Trang',
+            category_name: 'Nha Trang',
+            img: 'https://och.vn/cms/wp-content/uploads/2021/03/12.jpg',
+            location: 'Viet Nam'
+        },
+    ])
+
+    const callapi_get_liked = async () => {
+        try {
+            const response = await axios.get(`${ip}/liked/${user.user_name}`)
+            setApi(response.data)
+        } catch (error) {
+            // Kiểm tra xem lỗi có từ server không
+            if (error.response) {
+                // Server đã phản hồi với mã trạng thái khác 2xx
+                console.error('Error response data:', error.response.data);
+            } else if (error.request) {
+                // Yêu cầu đã được gửi nhưng không nhận được phản hồi
+                console.error('Error request:', error.request);
+            } else {
+                // Lỗi khác
+                console.error('Error message:', error.message);
+            }
+        }
+    }
+
+    const callapi_get_booked = async () => {
+        try {
+            const response = await axios.get(`${ip}/booked/${user._id}`)
+            console.log(response.data)
+        } catch (error) {
+            // Kiểm tra xem lỗi có từ server không
+            if (error.response) {
+                // Server đã phản hồi với mã trạng thái khác 2xx
+                console.error('Error response data:', error.response.data);
+            } else if (error.request) {
+                // Yêu cầu đã được gửi nhưng không nhận được phản hồi
+                console.error('Error request:', error.request);
+            } else {
+                // Lỗi khác
+                console.error('Error message:', error.message);
+            }
+        }
+    }
+
+    const call_api = (page_name) => {
+        if (page_name === 'liked') {
+            callapi_get_liked()
+        } else if (page_name === 'booked') {
+            callapi_get_booked()
+        }
     }
 
     return (
@@ -295,18 +367,118 @@ export default DashboardScreen = ({ navigation, route }) => {
                 </View>
 
                 {/* Booked Screen */}
-                <View style={styles.container}>
-                    <Text style={{ fontSize: 100 }}>booked Screen</Text>
+                <View style={[styles.container, { backgroundColor: '#1B6CD8' }]}>
+                    {/* lớp dưới */}
+                    <View style={styles.booked_page_up_container}>
+                        <Text style={[styles.booked_page_title, { marginTop: 50 }]}>
+                            Select Type
+                        </Text>
+                        <TextInput
+                            style={styles.booked_page_input}
+                            placeholder='Restaurant'
+                            placeholderTextColor='#6AAEFF'
+                        />
+                        <FontAwesome name="chevron-down" size={14} color="#6AAEFF" style={styles.select_type_icon} />
+                        <Text style={[styles.booked_page_title]}>
+                            Select Date
+                        </Text>
+                        <TextInput
+                            style={[styles.booked_page_input, { alignSelf: 'flex-end' }]}
+                            placeholder='01.01.2023'
+                            placeholderTextColor='#6AAEFF'
+                        />
+                        <FontAwesome name="calendar" size={14} color="#6AAEFF" style={styles.select_type_icon2} />
+                    </View>
+
+                    {/* lớp trên */}
+                    <View style={styles.booked_page_down_container}>
+                        <Text style={styles.booked_list_title}>
+                            Booked List
+                        </Text>
+
+                        <ScrollView style={styles.liked_page_list}>
+                            {
+                                api.map((item, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={styles.liked_page_button}
+                                    >
+                                        <View>
+                                            <Image
+                                                source={{ uri: item.img }}
+                                                style={styles.liked_page_image}
+                                            />
+                                            <View style={styles.liked_page_star_row}>
+                                                <FontAwesome name="star" size={14} color="blue" />
+                                                <FontAwesome name="star" size={14} color="blue" />
+                                                <FontAwesome name="star" size={14} color="blue" />
+                                                <FontAwesome name="star" size={14} color="blue" />
+                                                <FontAwesome name="star" size={14} color="blue" />
+                                            </View>
+                                        </View>
+
+                                        <View style={styles.liked_page_right_column}>
+                                            <Text style={styles.name_place}>{item.category_name}</Text>
+                                            <View style={styles.liked_page_location_row}>
+                                                <FontAwesome name="map-marker" size={17} color="#B0B0B0" />
+                                                <Text style={styles.liked_page_country}>{item.location}</Text>
+                                            </View>
+                                            <FontAwesome name="arrow-right" size={22} color="blue" style={styles.liked_page_arrow} />
+                                        </View>
+                                    </TouchableOpacity>
+                                ))
+                            }
+                        </ScrollView>
+                    </View>
                 </View>
 
                 {/* Liked Screen */}
                 <View style={styles.container}>
-                    <Text style={{ fontSize: 100 }}>Liked Screen</Text>
+                    <Text style={styles.title_liked_page}>
+                        My Favorites
+                    </Text>
+                    <Text style={styles.content_liked_page}>
+                        properties that i love
+                    </Text>
+                    <ScrollView style={styles.liked_page_list}>
+                        {
+                            api.map((item, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    style={styles.liked_page_button}
+                                    onPress={() => goToDetailScreen(item._id)}
+                                >
+                                    <View>
+                                        <Image
+                                            source={{ uri: item.img }}
+                                            style={styles.liked_page_image}
+                                        />
+                                        <View style={styles.liked_page_star_row}>
+                                            <FontAwesome name="star" size={14} color="blue" />
+                                            <FontAwesome name="star" size={14} color="blue" />
+                                            <FontAwesome name="star" size={14} color="blue" />
+                                            <FontAwesome name="star" size={14} color="blue" />
+                                            <FontAwesome name="star" size={14} color="blue" />
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.liked_page_right_column}>
+                                        <Text style={styles.name_place}>{item.tourist_name}</Text>
+                                        <View style={styles.liked_page_location_row}>
+                                            <FontAwesome name="map-marker" size={17} color="#B0B0B0" />
+                                            <Text style={styles.liked_page_country}>{item.location}</Text>
+                                        </View>
+                                        <FontAwesome name="arrow-right" size={22} color="blue" style={styles.liked_page_arrow} />
+                                    </View>
+                                </TouchableOpacity>
+                            ))
+                        }
+                    </ScrollView>
                 </View>
 
                 {/* Setting Screen */}
                 <View style={styles.container}>
-                    <Image style={styles.avatar_setting} source={{uri : user.avatar}}/> 
+                    <Image style={styles.avatar_setting} source={{ uri: user.avatar }} />
                     <Text style={styles.name_setting}>{user.user_name}</Text>
                     <TouchableOpacity
                         style={styles.setting_logout_button}
@@ -362,7 +534,7 @@ export default DashboardScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     big_container: {
         height: screenWidth * 4,
-        
+
     },
     container: {
         backgroundColor: '#F2F2F7',
@@ -633,5 +805,118 @@ const styles = StyleSheet.create({
     logout_button_text: {
         color: 'red',
         fontSize: 20
+    },
+    title_liked_page: {
+        fontSize: 30,
+        fontFamily: 'OpenSans-Semibold',
+        marginTop: 50,
+        marginLeft: 30
+    },
+    content_liked_page: {
+        fontSize: 20,
+        fontFamily: 'OpenSans-Semibold',
+        color: '#B0B0B0',
+        marginTop: 20,
+        marginLeft: 30
+    },
+    liked_page_list: {
+        marginHorizontal: 30,
+    },
+    liked_page_button: {
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4.65,
+        elevation: 4,
+
+        borderRadius: 8,
+        width: '100%',
+        height: 100,
+        marginTop: 20,
+        flexDirection: 'row',
+        backgroundColor: 'white'
+    },
+    liked_page_image: {
+        width: 70,
+        height: 70,
+        borderRadius: 4,
+        marginTop: 5,
+        marginLeft: 13
+    },
+    liked_page_star_row: {
+        flexDirection: 'row',
+        marginLeft: 13,
+        marginTop: 6
+    },
+    liked_page_right_column: {
+        marginLeft: 27,
+        flex: 1
+    },
+    name_place: {
+        fontSize: 20,
+        fontFamily: 'OpenSans-Semibold',
+        marginTop: 10
+    },
+    liked_page_location_row: {
+        flexDirection: 'row',
+        marginTop: 18,
+    },
+    liked_page_country: {
+        fontSize: 16,
+        fontFamily: 'OpenSans-Semibold',
+        marginLeft: 16,
+        color: '#B0B0B0'
+    },
+    liked_page_arrow: {
+        position: 'absolute',
+        top: 50,
+        right: 22
+    },
+    booked_page_up_container: {
+        flex: 1,
+        marginHorizontal: 30
+    },
+    booked_page_title: {
+        fontSize: 20,
+        fontFamily: 'OpenSans-Semibold',
+        marginTop: 35,
+        color: 'white'
+    },
+    booked_page_input: {
+        width: 260,
+        height: 53,
+        backgroundColor: '#0C5ABE',
+        borderRadius: 16,
+        marginTop: 18,
+        paddingLeft: 42,
+        paddingRight: 22
+    },
+    select_type_icon: {
+        position: 'absolute',
+        right: 100,
+        top: 110
+    },
+    select_type_icon2: {
+        position: 'absolute',
+        right: 30,
+        top: 245
+    },
+    booked_page_down_container: {
+        width: screenWidth,
+        backgroundColor: 'white',
+        borderRadius: 32,
+        position: 'absolute',
+        top: 320,
+        height: 511
+    },
+    booked_list_title: {
+        fontSize: 20,
+        fontFamily: 'OpenSans-Semibold',
+        color: '#212B69',
+        marginTop: 40,
+        marginLeft: 30,
     }
 })
