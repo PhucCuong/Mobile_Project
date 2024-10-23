@@ -13,6 +13,7 @@ export default DashboardScreen = ({ navigation, route }) => {
     const id = route.params.id
 
     const scrollScreen = useRef(null)
+    const modal = useRef(null)
 
     const isFocused = useIsFocused();
 
@@ -212,6 +213,48 @@ export default DashboardScreen = ({ navigation, route }) => {
     const filterBooked = bookedApi.filter((item) =>
         item.type === 'tourlist' ? item.tourist_name.toLowerCase().includes(filterName.toLowerCase()) : item.category_name.toLowerCase().includes(filterName.toLowerCase())
     )
+
+    // lấy các bàn đã được booked
+    const [bookedArray, setBookedArray] = useState([])
+
+    const getTableBooked = (tableArray) => {
+        setBookedArray([])
+        tableArray.forEach((table, index) => {
+            table.book_user.forEach((item, i) => {
+                if (item.user_name === user.user_name) {
+                    setBookedArray(prev => [...prev, table.tableName]);
+                }
+            })
+        })
+    }
+
+
+    const getRoomBooked = (roomArray) => {
+        setBookedArray([])
+        roomArray.forEach((room, index) => {
+            room.book_user.forEach((item, i) => {
+                if (item.user_name === user.user_name) {
+                    setBookedArray(prev => [...prev, room.name_room]);
+                }
+            })
+        })
+    }
+
+
+    // đi đến trang modal booked
+    const [isFirstRender, setIsFirstRender] = useState(true);
+
+    const goToModal = () => {
+        navigation.navigate('ModalBookedScreen', { booked_array: bookedArray });
+    };
+
+    useEffect(() => {
+        if (!isFirstRender && bookedArray.length > 0) {
+            goToModal();
+        } else {
+            setIsFirstRender(false);  // Sau lần render đầu tiên, flag được set thành false
+        }
+    }, [bookedArray]);
 
     return (
         <View>
@@ -413,6 +456,13 @@ export default DashboardScreen = ({ navigation, route }) => {
                                     <TouchableOpacity
                                         key={index}
                                         style={styles.liked_page_button}
+                                        onPress={() => {
+                                            if (item.type === 'restaurant' || item.type === 'coffee') {
+                                                getTableBooked(item.tables)
+                                            } else if (item.type === 'hotel') {
+                                                getRoomBooked(item.rooms)
+                                            }
+                                        }}
                                     >
                                         <View>
                                             <Image
@@ -538,6 +588,7 @@ export default DashboardScreen = ({ navigation, route }) => {
                     <FontAwesome name="gear" size={24} color={acctivedPage === 'setting' ? 'white' : '#555555'} />
                 </TouchableOpacity>
             </View>
+
         </View>
     )
 }
