@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, Alert } from 'react-native';
+import { Image, StyleSheet, Platform, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, Alert, FlatList } from 'react-native';
 import { useState, useEffect, useRef } from 'react'
 import { FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
@@ -23,6 +23,8 @@ export default DashboardScreen = ({ navigation, route }) => {
         location: '',
         gender: '',
     });
+
+    /////////////
 
     const [tourlist, setTourlist] = useState([])
 
@@ -132,7 +134,7 @@ export default DashboardScreen = ({ navigation, route }) => {
             ],
             { cancelable: true }  // Cho phép đóng Alert khi chạm ngoài
         );
-    } 
+    }
 
     const [api, setApi] = useState([
         {
@@ -158,6 +160,8 @@ export default DashboardScreen = ({ navigation, route }) => {
         },
     ])
 
+    const [bookedApi, setBookedApi] = useState([])
+
     const callapi_get_liked = async () => {
         try {
             const response = await axios.get(`${ip}/liked/${user.user_name}`)
@@ -179,8 +183,8 @@ export default DashboardScreen = ({ navigation, route }) => {
 
     const callapi_get_booked = async () => {
         try {
-            const response = await axios.get(`${ip}/booked/${user._id}`)
-            console.log(response.data)
+            const response = await axios.get(`${ip}/booked/${user.user_name}`)
+            setBookedApi(response.data)
         } catch (error) {
             // Kiểm tra xem lỗi có từ server không
             if (error.response) {
@@ -203,6 +207,11 @@ export default DashboardScreen = ({ navigation, route }) => {
             callapi_get_booked()
         }
     }
+
+    const [filterName, setFilterName] = useState('')
+    const filterBooked = bookedApi.filter((item) =>
+        item.type === 'tourlist' ? item.tourist_name.toLowerCase().includes(filterName.toLowerCase()) : item.category_name.toLowerCase().includes(filterName.toLowerCase())
+    )
 
     return (
         <View>
@@ -371,14 +380,16 @@ export default DashboardScreen = ({ navigation, route }) => {
                     {/* lớp dưới */}
                     <View style={styles.booked_page_up_container}>
                         <Text style={[styles.booked_page_title, { marginTop: 50 }]}>
-                            Select Type
+                            Select Name
                         </Text>
                         <TextInput
                             style={styles.booked_page_input}
-                            placeholder='Restaurant'
+                            placeholder='Enter name'
                             placeholderTextColor='#6AAEFF'
+                            onChangeText={(value) => setFilterName(value)}
                         />
-                        <FontAwesome name="chevron-down" size={14} color="#6AAEFF" style={styles.select_type_icon} />
+                        <FontAwesome name="search" size={14} color="#6AAEFF" style={styles.select_type_icon} />
+
                         <Text style={[styles.booked_page_title]}>
                             Select Date
                         </Text>
@@ -396,9 +407,9 @@ export default DashboardScreen = ({ navigation, route }) => {
                             Booked List
                         </Text>
 
-                        <ScrollView style={styles.liked_page_list}>
+                        <ScrollView style={[styles.liked_page_list, { marginBottom: 170 }]}>
                             {
-                                api.map((item, index) => (
+                                filterBooked.map((item, index) => (
                                     <TouchableOpacity
                                         key={index}
                                         style={styles.liked_page_button}
@@ -418,12 +429,12 @@ export default DashboardScreen = ({ navigation, route }) => {
                                         </View>
 
                                         <View style={styles.liked_page_right_column}>
-                                            <Text style={styles.name_place}>{item.category_name}</Text>
+                                            <Text style={styles.name_place}>{item.type === 'tourlist' ? item.tourist_name : item.category_name}</Text>
                                             <View style={styles.liked_page_location_row}>
                                                 <FontAwesome name="map-marker" size={17} color="#B0B0B0" />
                                                 <Text style={styles.liked_page_country}>{item.location}</Text>
                                             </View>
-                                            <FontAwesome name="arrow-right" size={22} color="blue" style={styles.liked_page_arrow} />
+                                            <FontAwesome name="check" size={22} color="green" style={styles.liked_page_arrow} />
                                         </View>
                                     </TouchableOpacity>
                                 ))
@@ -530,6 +541,7 @@ export default DashboardScreen = ({ navigation, route }) => {
         </View>
     )
 }
+
 
 const styles = StyleSheet.create({
     big_container: {
@@ -918,5 +930,5 @@ const styles = StyleSheet.create({
         color: '#212B69',
         marginTop: 40,
         marginLeft: 30,
-    }
+    },
 })
