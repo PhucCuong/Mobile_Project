@@ -14,7 +14,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
     const user = route.params.user
     const price_table = route.params.price_table
     const restaurant_name = route.params.restaurant_name
-    
+
     // hàm cắt lấy giá 
     function extractNumber(str) {
         // Loại bỏ " VND/Table" và các dấu chấm
@@ -22,7 +22,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
         // Chuyển đổi chuỗi thành số
         return parseInt(numberString, 10);
     }
-    
+
     const price = extractNumber(price_table)
 
     const [availableTables, setAvailableTables] = useState([])
@@ -68,7 +68,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
             scrollViewRef.current.scrollTo({ x: screenWidth * 2, animated: true });
         }
     }
-    
+
     // hàm đổi tiền số thành VND
     function numberToVND(num) {
         // Chuyển đổi số thành chuỗi với dấu phân cách hàng nghìn
@@ -101,11 +101,11 @@ export default BookingRestaurant = ({ navigation, route }) => {
 
     // mảng select table
     const [tableArray, setTableArray] = useState([])
-    
+
     const handleClickTable = (table_id) => {
-        
+
         isInclude = tableArray.includes(table_id)
-        if(!isInclude) {
+        if (!isInclude) {
             setTableArray(prevArray => [...prevArray, table_id]);
         } else {
             //code xoá phần tử table_id trong mảng tableArray
@@ -167,10 +167,10 @@ export default BookingRestaurant = ({ navigation, route }) => {
                 timeText,
                 tableArray
             });
-    
+
             if (response.status === 200) {
                 Alert.alert('Booked successfully');
-                navigation.navigate('CategoriesList', { type: 'restaurants' , user: user})
+                navigation.navigate('CategoriesList', { type: 'restaurants', user: user })
             } else {
                 Alert.alert('Booked failed');
             }
@@ -191,6 +191,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
             }
         }
     }
+
 
     return (
         <SafeAreaView
@@ -214,26 +215,30 @@ export default BookingRestaurant = ({ navigation, route }) => {
                 ref={scrollViewRef}
                 pagingEnabled
                 onScroll={handleScrollX}
+                scrollEnabled={false}
             >
                 {/* màn hình chọn đặt bàn */}
                 <View
                     style={styles.choose_table_container}
                 >
                     <Text style={styles.restaurant_name}>{restaurant_name}</Text>
-                    <ScrollView>
+                    <ScrollView
+                        style={styles.table_scroll} 
+                    >
                         <View
                             style={styles.table_row}
                         >
                             {
                                 availableTables.map((item, index) => (
                                     <TouchableOpacity
-                                        style={[styles.one_table, {backgroundColor: arrayIncludeTableId(item._id) ? '#96D8D0' : '#EBEFF3'}]}
+                                        style={[styles.one_table, { backgroundColor: arrayIncludeTableId(item._id) ? '#96D8D0' : '#EBEFF3' }]}
                                         onPress={() => handleClickTable(item._id)}
                                         key={index}
                                     >
                                         <FontAwesome name="cutlery" size={24} color="#252935" />
                                         <Text>{item.tableName}</Text>
-                                        <FontAwesome name="check-circle" size={24} color="#111111" style={[styles.check_icon, {display: arrayIncludeTableId(item._id) ? 'flex' : 'none'}]}/>
+                                        <Text>{item.type}</Text>
+                                        <FontAwesome name="check-circle" size={24} color="#111111" style={[styles.check_icon, { display: arrayIncludeTableId(item._id) ? 'flex' : 'none' }]} />
                                     </TouchableOpacity>
                                 ))
                             }
@@ -436,7 +441,8 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         paddingLeft: 15,
         flexDirection: 'row',
-        paddingBottom: 20
+        paddingBottom: 20,
+        flex: 1,
     },
     one_table: {
         width: 100,

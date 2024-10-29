@@ -232,6 +232,7 @@ export default BookingHotel = ({ navigation, route }) => {
                 ref={scrollViewRef}
                 pagingEnabled
                 onScroll={handleScrollX}
+                scrollEnabled={false}
             >
                 {/* màn hình chọn đặt bàn */}
                 <View
@@ -251,6 +252,7 @@ export default BookingHotel = ({ navigation, route }) => {
                                     >
                                         <FontAwesome name="hotel" size={24} color="#252935" />
                                         <Text>{item.name_room}</Text>
+                                        <Text>{item.type}</Text>
                                         <Text>{item.price}</Text>
                                         <FontAwesome name="check-circle" size={24} color="#111111" style={[styles.check_icon, {display: arrayIncludeRoomId(item._id) ? 'flex' : 'none'}]}/>
                                     </TouchableOpacity>

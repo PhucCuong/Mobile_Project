@@ -217,6 +217,7 @@ export default DashboardScreen = ({ navigation, route }) => {
     // lấy các bàn đã được booked
     const [bookedArray, setBookedArray] = useState([])
 
+
     const getTableBooked = (tableArray) => {
         setBookedArray([])
         tableArray.forEach((table, index) => {

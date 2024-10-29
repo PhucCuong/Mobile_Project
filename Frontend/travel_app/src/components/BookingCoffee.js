@@ -214,6 +214,7 @@ export default BookingCoffee = ({navigation, route}) => {
                 ref={scrollViewRef}
                 pagingEnabled
                 onScroll={handleScrollX}
+                scrollEnabled={false}
             >
                 {/* màn hình chọn đặt bàn */}
                 <View
@@ -233,6 +234,7 @@ export default BookingCoffee = ({navigation, route}) => {
                                     >
                                         <FontAwesome name="coffee" size={24} color="#252935" />
                                         <Text>{item.tableName}</Text>
+                                        <Text>{item.type}</Text>
                                         <FontAwesome name="check-circle" size={24} color="#111111" style={[styles.check_icon, {display: arrayIncludeTableId(item._id) ? 'flex' : 'none'}]}/>
                                     </TouchableOpacity>
                                 ))

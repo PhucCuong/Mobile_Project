@@ -12,7 +12,6 @@ const screenHeight = Dimensions.get('window').height
 
 export default ModalBookedScreen = ({ navigation, route }) => {
     const bookedArray = route.params.booked_array
-    console.log(bookedArray)
 
     const goBackScreen = () => {
         navigation.goBack()
@@ -94,6 +93,6 @@ const styles = StyleSheet.create({
     },
     table_name: {
         fontSize: 20,
-        color: '#B0B0B0'
+        color: '#111111'
     }
 })
