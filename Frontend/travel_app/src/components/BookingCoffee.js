@@ -221,7 +221,9 @@ export default BookingCoffee = ({navigation, route}) => {
                     style={styles.choose_table_container}
                 >
                     <Text style={styles.coffee_name}>{coffee_name}</Text>
-                    <ScrollView>
+                    <ScrollView
+                        style={{ maxHeight : 500}}
+                    >
                         <View
                             style={styles.table_row}
                         >

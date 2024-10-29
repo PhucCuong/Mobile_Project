@@ -223,7 +223,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
                 >
                     <Text style={styles.restaurant_name}>{restaurant_name}</Text>
                     <ScrollView
-                        style={styles.table_scroll} 
+                        style={{ maxHeight : 500}} 
                     >
                         <View
                             style={styles.table_row}
@@ -442,7 +442,6 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         flexDirection: 'row',
         paddingBottom: 20,
-        flex: 1,
     },
     one_table: {
         width: 100,
