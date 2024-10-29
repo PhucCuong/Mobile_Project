@@ -17,19 +17,16 @@ export default CategoriesList = ({ navigation, route }) => {
 
     const [restaurantList, setRestaurantList] = useState([])
     const [hotelList, setHotelList] = useState([])
-    const [beachList, setBeachList] = useState([])
     const [coffeeList, setCoffeeList] = useState([])
 
     const callApi = async () => {
         try {
             const response_restaurant = await axios.get(`${ip}/Restaurant`)
             const response_hotel = await axios.get(`${ip}/Hotel`)
-            const response_beach = await axios.get(`${ip}/Beach`)
             const response_coffee = await axios.get(`${ip}/CoffeeShop`)
 
             setRestaurantList(response_restaurant.data)
             setHotelList(response_hotel.data)
-            setBeachList(response_beach.data)
             setCoffeeList(response_coffee.data)
         } catch (error) {
             console.log(error)
@@ -37,7 +34,6 @@ export default CategoriesList = ({ navigation, route }) => {
 
         if (page === 'restaurants') scrollViewRef.current.scrollTo({ x: screenWidth * 0, animated: false });
         else if (page === 'hotels') scrollViewRef.current.scrollTo({ x: screenWidth * 1, animated: false });
-        else if (page === 'beaches') scrollViewRef.current.scrollTo({ x: screenWidth * 2, animated: false });
         else if (page === 'coffees') scrollViewRef.current.scrollTo({ x: screenWidth * 3, animated: false });
     }
 
@@ -57,10 +53,7 @@ export default CategoriesList = ({ navigation, route }) => {
         } else if (index === 1) {
             setPage('hotels')
             // categories_list = hotelList
-        } else if (index === 2) {
-            setPage('beaches')
-            // categories_list = beachList
-        } else if (index === 3) {
+        }  else if (index === 2) {
             setPage('coffees')
             // categories_list = coffeeList
         }
@@ -114,13 +107,6 @@ export default CategoriesList = ({ navigation, route }) => {
                 >
                     <Text style={[styles.selected_text, { color: page === 'hotels' ? 'red' : '#111111' }]}>
                         Hotels
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => handleSelectedPage('beaches', 2)}
-                >
-                    <Text style={[styles.selected_text, { color: page === 'beaches' ? 'red' : '#111111' }]}>
-                        Beaches
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -187,44 +173,6 @@ export default CategoriesList = ({ navigation, route }) => {
                                 key={index}
                                 style={[styles.category_container, { backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE' }]}
                                 onPress={() => goToBookingHotelScreen(item._id, item.category_name)}
-                            >
-                                <Image
-                                    source={{ uri: item.img }}
-                                    style={styles.category_image}
-                                />
-
-                                <View style={styles.category_content}>
-                                    <Text
-                                        style={styles.category_name}
-                                    >
-                                        {item.category_name}</Text>
-                                    <Text
-                                        style={styles.category_description}
-                                        numberOfLines={2}
-                                        ellipsizeMode="tail" // Hiển thị dấu "..." ở cuối (tail)
-                                    >{item.description}</Text>
-                                    <Text
-                                        style={styles.category_price}
-                                    >
-                                        {item.price}
-                                    </Text>
-
-                                </View>
-
-                                <TouchableOpacity style={styles.tym_container}>
-                                    <FontAwesome name="heart" size={18} color="white" />
-                                </TouchableOpacity>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </ScrollView>
-                <ScrollView style={styles.one_page}>
-                    <Text style={styles.list_title}>favorite Beaches</Text>
-                    <View style={styles.content}>
-                        {beachList.map((item, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={[styles.category_container, { backgroundColor: (index % 2 === 0) ? '#E6F2E9' : '#F4F2EE' }]}
                             >
                                 <Image
                                     source={{ uri: item.img }}

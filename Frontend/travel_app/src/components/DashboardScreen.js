@@ -335,16 +335,6 @@ export default DashboardScreen = ({ navigation, route }) => {
 
                             <TouchableOpacity
                                 style={styles.categories_button}
-                                onPress={() => gotoCategoriesListScreen('beaches')}
-                            >
-                                <View style={styles.icon_container}>
-                                    <FontAwesome name="bath" size={24} color="white" />
-                                </View>
-                                <Text style={styles.categories_text}>Beaches</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={styles.categories_button}
                                 onPress={() => gotoCategoriesListScreen('coffees')}
                             >
                                 <View style={styles.icon_container}>
