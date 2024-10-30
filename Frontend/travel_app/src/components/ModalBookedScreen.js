@@ -32,21 +32,23 @@ export default ModalBookedScreen = ({ navigation, route }) => {
                 <FontAwesome name="times" size={30} color="blue" />
             </TouchableOpacity>
             <Text style={styles.modal_text}>Rooms or Tables booked</Text>
-            <View style={styles.modal_container}>
-                {
-                    bookedArray.map((item, index) => (
-                        <TouchableOpacity
-                            key={index}
-                            style={styles.modal_item}
-                        >
-                            <FontAwesome name="user-circle" size={30} color="#B0B0B0" />
-                            <Text style={styles.table_name}>
-                                {item}
-                            </Text>
-                        </TouchableOpacity>
-                    ))
-                }
-            </View>
+            <ScrollView>
+                <View style={styles.modal_container}>
+                    {
+                        bookedArray.map((item, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                style={styles.modal_item}
+                            >
+                                <FontAwesome name="user-circle" size={30} color="#B0B0B0" />
+                                <Text style={styles.table_name}>
+                                    {item}
+                                </Text>
+                            </TouchableOpacity>
+                        ))
+                    }
+                </View>
+            </ScrollView>
         </ImageBackground >
     )
 }

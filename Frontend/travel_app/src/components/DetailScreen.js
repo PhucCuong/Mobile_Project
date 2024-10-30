@@ -34,31 +34,44 @@ export default DetailScreen = ({ navigation, route }) => {
         }
     }
 
+    const convertAmount = (string) => {
+        const newStr = string.replace(/,/g, '')
+        const newStr1 = newStr.replace(' ', '')
+        const newStr2 = newStr1.replace('VND', '')
+        return newStr2
+    }
+
     const bookingTourlistToApi = async () => {
-        try {
-            console.log("Calling API:", `${ip}/tourlist/booked/${id}`);
-            const response = await axios.put(`${ip}/tourlist/booked/${id}`, {
-                user_name: user.user_name,
-                avatar: user.avatar
-            });
-            if (response.status === 200) {
-                Alert.alert('Booked successfully')
-            } else {
-                Alert.alert('Booked failed')
-            }
-        } catch (error) {
-            if (error.response) {
-                // Server responded with a status other than 200 range
-                console.error('Error response:', error.response.data);
-                console.error('Error status:', error.response.status);
-            } else if (error.request) {
-                // Request was made but no response received
-                console.error('Error request:', error.request);
-            } else {
-                // Something happened in setting up the request
-                console.error('Error message:', error.message);
-            }
+        // try {
+        //     console.log("Calling API:", `${ip}/tourlist/booked/${id}`);
+        //     const response = await axios.put(`${ip}/tourlist/booked/${id}`, {
+        //         user_name: user.user_name,
+        //         avatar: user.avatar
+        //     });
+        //     if (response.status === 200) {
+        //         Alert.alert('Booked successfully')
+        //     } else {
+        //         Alert.alert('Booked failed')
+        //     }
+        // } catch (error) {
+        //     if (error.response) {
+        //         // Server responded with a status other than 200 range
+        //         console.error('Error response:', error.response.data);
+        //         console.error('Error status:', error.response.status);
+        //     } else if (error.request) {
+        //         // Request was made but no response received
+        //         console.error('Error request:', error.request);
+        //     } else {
+        //         // Something happened in setting up the request
+        //         console.error('Error message:', error.message);
+        //     }
+        // }
+        const info = {
+            user_name: user.user_name,
+            avatar: user.avatar
         }
+        const newPrice = convertAmount(tourlist.price)
+        navigation.navigate('ScanQR', { type: 'beach', amount: newPrice, account_bank: tourlist.tourist_name, id, info})
     }
 
     useEffect(() => {

@@ -174,40 +174,28 @@ export default BookingHotel = ({ navigation, route }) => {
         hideTimePicker();
     };
 
+    // hàm convert tiền
+    const convertAmount = (string) => {
+        const newStr = string.replace(/\./g, '')
+        const newStr1 = newStr.replace(' ', '')
+        const newStr2 = newStr1.replace('VND', '')
+        return newStr2
+    }
+
     // hàm booking gọi đẩy data lên sever
     const booking = async () => {
-        try {
-            const response = await axios.put(`${ip}/hotel/booking/${hotel_id}`, {
+        navigation.navigate('ScanQR', {
+            type: 'hotel', amount: convertAmount(totalPrice), account_bank: hotel_name, id: hotel_id,
+            info: {
                 fullName,
                 user_name: user.user_name,
                 phoneNumber,
                 dateText,
                 timeText,
                 roomArray
-            });
-    
-            if (response.status === 200) {
-                Alert.alert('Booked successfully');
-                navigation.navigate('CategoriesList', { type: 'hotels' , user: user})
-            } else {
-                Alert.alert('Booked failed');
-            }
-        } catch (error) {
-            // Kiểm tra xem lỗi có từ server không
-            if (error.response) {
-                // Server đã phản hồi với mã trạng thái khác 2xx
-                console.error('Error response data:', error.response.data);
-                Alert.alert('Booked failure', error.response.data.message || 'Unknown error');
-            } else if (error.request) {
-                // Yêu cầu đã được gửi nhưng không nhận được phản hồi
-                console.error('Error request:', error.request);
-                Alert.alert('Booked failure', 'No response from server');
-            } else {
-                // Lỗi khác
-                console.error('Error message:', error.message);
-                Alert.alert('Booked failure', error.message);
-            }
-        }
+            },
+            user
+        })
     }
 
     return (

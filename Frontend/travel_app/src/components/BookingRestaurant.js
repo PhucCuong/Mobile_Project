@@ -156,40 +156,28 @@ export default BookingRestaurant = ({ navigation, route }) => {
         hideTimePicker();
     };
 
+    // hàm convert tiền
+    const convertAmount = (string) => {
+        const newStr = string.replace(/\./g, '')
+        const newStr1 = newStr.replace(' ', '')
+        const newStr2 = newStr1.replace('VND', '')
+        return newStr2
+    }
+
     // hàm booking gọi đẩy data lên sever
     const booking = async () => {
-        try {
-            const response = await axios.put(`${ip}/restaurant/booking/${restaurant_id}`, {
+        navigation.navigate('ScanQR', {
+            type: 'restaurant', amount: convertAmount(stringPrice), account_bank: restaurant_name, id: restaurant_id,
+            info: {
                 fullName,
                 user_name: user.user_name,
                 phoneNumber,
                 dateText,
                 timeText,
                 tableArray
-            });
-
-            if (response.status === 200) {
-                Alert.alert('Booked successfully');
-                navigation.navigate('CategoriesList', { type: 'restaurants', user: user })
-            } else {
-                Alert.alert('Booked failed');
-            }
-        } catch (error) {
-            // Kiểm tra xem lỗi có từ server không
-            if (error.response) {
-                // Server đã phản hồi với mã trạng thái khác 2xx
-                console.error('Error response data:', error.response.data);
-                Alert.alert('Booked failure', error.response.data.message || 'Unknown error');
-            } else if (error.request) {
-                // Yêu cầu đã được gửi nhưng không nhận được phản hồi
-                console.error('Error request:', error.request);
-                Alert.alert('Booked failure', 'No response from server');
-            } else {
-                // Lỗi khác
-                console.error('Error message:', error.message);
-                Alert.alert('Booked failure', error.message);
-            }
-        }
+            },
+            user
+        })
     }
 
 
@@ -223,7 +211,7 @@ export default BookingRestaurant = ({ navigation, route }) => {
                 >
                     <Text style={styles.restaurant_name}>{restaurant_name}</Text>
                     <ScrollView
-                        style={{ maxHeight : 500}} 
+                        style={{ maxHeight: 500 }}
                     >
                         <View
                             style={styles.table_row}
