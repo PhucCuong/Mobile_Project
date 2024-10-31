@@ -94,12 +94,14 @@ export default RegisterScreen = ({ navigation }) => {
                         placeholder='Password'
                         placeholderTextColor="#B0B0B0"
                         onChangeText={(value) => setPassword(value)}
+                        secureTextEntry={true}
                     />
                     <TextInput
                         style={styles.input}
                         placeholder='Retype Password'
                         placeholderTextColor="#B0B0B0"
                         onChangeText={(value) => setRetypePassword(value)}
+                        secureTextEntry={true}
                     />
                 </View>
                 <View style={{ marginTop: 40 }}>
